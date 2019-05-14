@@ -11,7 +11,7 @@ var (
 	// ErrInvalidID is returned when the provided ID is invalid.
 	ErrInvalidID = errors.New("invalid id provided")
 
-	// ErrDuplicate is used when a album already exists.
+	// ErrDuplicate is returned when a album already exists.
 	ErrDuplicate = errors.New("album already exists")
 
 	// ErrInvalidPrice is returned when the provided price is invalid.
