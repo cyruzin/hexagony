@@ -1,7 +1,7 @@
 package rest
 
 import (
-	albums "hexagony/internal/app/album"
+	"hexagony/internal/app/albums"
 	"net/http"
 )
 
