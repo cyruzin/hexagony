@@ -2,23 +2,8 @@ package albums
 
 import (
 	"context"
-	"errors"
 
 	"github.com/google/uuid"
-)
-
-var (
-	// ErrInvalidID is returned when the provided ID is invalid.
-	ErrInvalidID = errors.New("invalid id provided")
-
-	// ErrDuplicate is returned when a album already exists.
-	ErrDuplicate = errors.New("album already exists")
-
-	// ErrInvalidPrice is returned when the provided price is invalid.
-	ErrInvalidPrice = errors.New("invalid price provided")
-
-	// ErrNotFound is returned when the album is not found.
-	ErrNotFound = errors.New("could not find the album")
 )
 
 type service struct {
