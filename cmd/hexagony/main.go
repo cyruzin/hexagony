@@ -5,11 +5,6 @@ import (
 	"hexagony/internal/app/api/rest"
 	"hexagony/internal/app/repository/mysql"
 	"log"
-	"net/http"
-	"time"
-
-	"github.com/go-chi/chi"
-	"github.com/go-chi/chi/middleware"
 )
 
 func main() {
@@ -23,15 +18,7 @@ func main() {
 
 	albumHandlers := rest.NewHandler(mysqlRepository)
 
-	router := chi.NewRouter()
-	router.Use(middleware.Timeout(60 * time.Second))
-	router.Use(middleware.Logger)
+	router := rest.Router(albumHandlers)
 
-	router.Get("/album", albumHandlers.Index)
-	router.Get("/album/{id}", albumHandlers.Show)
-	router.Post("/album", albumHandlers.Store)
-	router.Put("/album/{id}", albumHandlers.Update)
-	router.Delete("/album/{id}", albumHandlers.Delete)
-
-	http.ListenAndServe(":8000", router)
+	rest.Server(ctx, router)
 }
