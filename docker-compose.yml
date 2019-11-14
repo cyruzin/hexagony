@@ -1,0 +1,27 @@
+version: "3.3"
+
+services: 
+
+  mysql:
+    image: mysql:5.7.28
+    container_name: hexagony-database
+    hostname: hexagony-database
+    restart: always
+    volumes:
+      - ./db:/docker-entrypoint-initdb.d
+    ports: 
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD
+    
+  api:
+    build:
+      context: .
+    container_name: hexagony-api
+    hostname: hexagony-api
+    restart: always
+    ports:
+      - 8000:8000
+    env_file: .env
+    depends_on:
+      - mysql
