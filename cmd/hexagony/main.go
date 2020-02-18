@@ -26,7 +26,7 @@ func main() {
 
 	mysqlRepository, err := mysql.NewMysqlRepository(ctx, databaseURL)
 	if err != nil {
-		log.Println(err)
+		log.Fatal(err.Error())
 	}
 
 	albumHandlers := rest.NewHandler(mysqlRepository)
