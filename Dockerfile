@@ -1,4 +1,4 @@
-FROM golang:1.13.1 as build-stage
+FROM golang:1.13.8 as build-stage
 
 WORKDIR /go/src/github.com/cyruzin/hexagony
 

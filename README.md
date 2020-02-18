@@ -7,3 +7,23 @@ This repo represents my agony to learn this architecture... I'm kidding :) This 
 ## Status
 
 In development.
+
+## Install
+
+First rename the **.env_example** file to **.env** and fill the MySQL pass.
+
+Next, make sure that you have Docker and Docker Compose installed and then run the following command:
+
+```sh
+$ docker-compose up
+```
+
+Then, check the app up and running: http://localhost:8000.
+
+## Schema
+
+Check inside the folder **api/insomnia-schema**. 
+
+## License
+
+MIT
