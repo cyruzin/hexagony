@@ -8,9 +8,9 @@ import (
 
 // Album is used for album type.
 type Album struct {
-	ID        uuid.UUID     `json:"id"`
-	Name      string        `json:"string"`
+	UUID      uuid.UUID     `db:"uuid" json:"id"`
+	Name      string        `json:"name"`
 	Length    time.Duration `json:"length"`
-	CreatedAt int64         `db:"created_at" json:"created_at"`
-	UpdatedAt int64         `db:"updated_at" json:"updated_at"`
+	CreatedAt time.Time     `db:"created_at" json:"created_at"`
+	UpdatedAt time.Time     `db:"updated_at" json:"updated_at"`
 }

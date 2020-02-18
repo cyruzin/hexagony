@@ -13,10 +13,10 @@ import (
 func Server(ctx context.Context, router http.Handler) {
 	srv := &http.Server{
 		Addr:              ":8000",
-		ReadTimeout:       10 * time.Second,
+		ReadTimeout:       5 * time.Second,
 		ReadHeaderTimeout: 5 * time.Second,
-		WriteTimeout:      10 * time.Second,
-		IdleTimeout:       120 * time.Second,
+		WriteTimeout:      5 * time.Second,
+		IdleTimeout:       60 * time.Second,
 		Handler:           router,
 	}
 
