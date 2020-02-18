@@ -23,16 +23,10 @@ type mysqlRepository struct {
 
 // NewMysqlRepository creates a instance of MySQL that access the albums repository.
 func NewMysqlRepository(
-	ctx context.Context,
 	dataSourceName string,
-) (albums.Repository, error) {
+) albums.Repository {
 	client := sqlx.MustConnect("mysql", dataSourceName)
-
-	if err := client.PingContext(ctx); err != nil {
-		return nil, err
-	}
-
-	return &mysqlRepository{client}, nil
+	return &mysqlRepository{client}
 }
 
 // FindAll finds the latest albums.

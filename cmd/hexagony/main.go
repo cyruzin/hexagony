@@ -8,7 +8,6 @@ import (
 	"hexagony/internal/app/repository/mysql"
 
 	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 )
 
 func main() {
@@ -25,10 +24,7 @@ func main() {
 		cfg.DBPort, cfg.DBName,
 	)
 
-	mysqlRepository, err := mysql.NewMysqlRepository(ctx, databaseURL)
-	if err != nil {
-		log.Error().Err(err)
-	}
+	mysqlRepository := mysql.NewMysqlRepository(databaseURL)
 
 	albumHandlers := rest.NewHandler(mysqlRepository)
 	router := rest.Router(albumHandlers)
