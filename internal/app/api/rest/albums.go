@@ -1,7 +1,6 @@
 package rest
 
 import (
-	"encoding/json"
 	"hexagony/internal/app/albums"
 	"net/http"
 	"time"
@@ -41,7 +40,7 @@ func NewHandler(albumService albums.Service) AlbumHandler {
 func (h *handler) Index(w http.ResponseWriter, r *http.Request) {
 	albums, err := h.albumService.FindAll(r.Context())
 	if err != nil {
-		InvalidRequest(w, err, errFindAll, http.StatusUnprocessableEntity)
+		InvalidRequest(w, r, err, errFindAll, http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -52,13 +51,13 @@ func (h *handler) Index(w http.ResponseWriter, r *http.Request) {
 func (h *handler) Show(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
-		InvalidRequest(w, err, errUUIDParse, http.StatusUnprocessableEntity)
+		InvalidRequest(w, r, err, errUUIDParse, http.StatusUnprocessableEntity)
 		return
 	}
 
 	album, err := h.albumService.FindByID(r.Context(), uuid)
 	if err != nil {
-		InvalidRequest(w, err, errFindByID, http.StatusUnprocessableEntity)
+		InvalidRequest(w, r, err, errFindByID, http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -71,7 +70,7 @@ func (h *handler) Store(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&album)
 	if err != nil {
-		InvalidRequest(w, err, errAdd, http.StatusUnprocessableEntity)
+		InvalidRequest(w, r, err, errAdd, http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -81,7 +80,7 @@ func (h *handler) Store(w http.ResponseWriter, r *http.Request) {
 
 	err = h.albumService.Add(r.Context(), &album)
 	if err != nil {
-		InvalidRequest(w, err, errAdd, http.StatusUnprocessableEntity)
+		InvalidRequest(w, r, err, errAdd, http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -92,7 +91,7 @@ func (h *handler) Store(w http.ResponseWriter, r *http.Request) {
 func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
-		InvalidRequest(w, err, errUUIDParse, http.StatusUnprocessableEntity)
+		InvalidRequest(w, r, err, errUUIDParse, http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -100,7 +99,7 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewDecoder(r.Body).Decode(&album)
 	if err != nil {
-		InvalidRequest(w, err, errUpdate, http.StatusUnprocessableEntity)
+		InvalidRequest(w, r, err, errUpdate, http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -108,7 +107,7 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 
 	err = h.albumService.Update(r.Context(), uuid, &album)
 	if err != nil {
-		InvalidRequest(w, err, errUpdate, http.StatusUnprocessableEntity)
+		InvalidRequest(w, r, err, errUpdate, http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -119,13 +118,13 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
-		InvalidRequest(w, err, errUUIDParse, http.StatusUnprocessableEntity)
+		InvalidRequest(w, r, err, errUUIDParse, http.StatusUnprocessableEntity)
 		return
 	}
 
 	err = h.albumService.Delete(r.Context(), uuid)
 	if err != nil {
-		InvalidRequest(w, err, errDelete, http.StatusUnprocessableEntity)
+		InvalidRequest(w, r, err, errDelete, http.StatusUnprocessableEntity)
 		return
 	}
 

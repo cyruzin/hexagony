@@ -37,7 +37,7 @@ func Router(h AlbumHandler) http.Handler {
 	router.Use(cors.Handler)
 	router.Use(middleware.Timeout(60 * time.Second))
 	router.Use(render.SetContentType(render.ContentTypeJSON))
-	router.Use(middleware.Logger)
+	router.Use(LoggerMiddleware)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hexagony v1.0"))

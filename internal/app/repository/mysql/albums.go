@@ -3,6 +3,7 @@ package mysql
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"hexagony/internal/app/albums"
 
 	"github.com/google/uuid"
@@ -10,6 +11,10 @@ import (
 
 	// Mysql connection
 	_ "github.com/go-sql-driver/mysql"
+)
+
+const (
+	errResourceNotFound = "The resource you requested could not be found"
 )
 
 type mysqlRepository struct {
@@ -21,10 +26,7 @@ func NewMysqlRepository(
 	ctx context.Context,
 	dataSourceName string,
 ) (albums.Repository, error) {
-	client, err := sqlx.ConnectContext(ctx, "mysql", dataSourceName)
-	if err != nil {
-		return nil, err
-	}
+	client := sqlx.MustConnect("mysql", dataSourceName)
 
 	if err := client.PingContext(ctx); err != nil {
 		return nil, err
@@ -68,6 +70,10 @@ func (r *mysqlRepository) FindByID(
 		return nil, err
 	}
 
+	if album.Name == "" {
+		return nil, errors.New(errResourceNotFound)
+	}
+
 	return &album, nil
 }
 
@@ -97,15 +103,25 @@ func (r *mysqlRepository) Update(
 	uuid uuid.UUID,
 	album *albums.Album,
 ) error {
-	if _, err := r.client.ExecContext(
+	result, err := r.client.ExecContext(
 		ctx,
 		sqlUpdate,
 		album.Name,
 		album.Length,
 		album.UpdatedAt,
 		uuid,
-	); err != nil {
+	)
+	if err != nil {
 		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return errors.New(errResourceNotFound)
 	}
 
 	return nil
@@ -116,12 +132,22 @@ func (r *mysqlRepository) Delete(
 	ctx context.Context,
 	uuid uuid.UUID,
 ) error {
-	if _, err := r.client.ExecContext(
+	result, err := r.client.ExecContext(
 		ctx,
 		sqlDelete,
 		uuid,
-	); err != nil {
+	)
+	if err != nil {
 		return err
+	}
+
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if rowsAffected == 0 {
+		return errors.New(errResourceNotFound)
 	}
 
 	return nil

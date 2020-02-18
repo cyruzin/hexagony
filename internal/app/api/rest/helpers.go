@@ -1,10 +1,13 @@
 package rest
 
 import (
-	"encoding/json"
-	"log"
 	"net/http"
+
+	jsoniter "github.com/json-iterator/go"
+	"github.com/rs/zerolog/log"
 )
+
+var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 // APIMessage is a struct for generic JSON response.
 type APIMessage struct {
@@ -15,12 +18,24 @@ type APIMessage struct {
 // InvalidRequest handles API errors.
 func InvalidRequest(
 	w http.ResponseWriter,
+	r *http.Request,
 	err error,
 	message string,
 	httpCode int,
 ) {
-	log.Printf("Error: %s", err.Error())
+	log.Error().
+		Err(err).
+		Str("method", r.Method).
+		Str("url", r.URL.String()).
+		Str("agent", r.UserAgent()).
+		Str("referer", r.Referer()).
+		Str("proto", r.Proto).
+		Str("remote_address", r.RemoteAddr).
+		Int("status", httpCode).
+		Msg(message)
+
 	w.WriteHeader(httpCode)
+
 	apiError := &APIMessage{message, httpCode}
 	if err := json.NewEncoder(w).Encode(apiError); err != nil {
 		return
