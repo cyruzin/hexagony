@@ -9,8 +9,7 @@ import (
 // Config is a configuration struct that contains
 // all environment variables of the app.
 type Config struct {
-	EnvMode           string        `envconfig:"ENVMODE" default:"development" required:"true"`
-	IsDebug           bool          `envconfig:"ENVMODE" default:"true"`
+	EnvMode           string        `envconfig:"ENV_MODE" default:"development" required:"true"`
 	Port              string        `envconfig:"PORT" default:"8000" required:"true"`
 	ReadTimeOut       time.Duration `envconfig:"READ_TIMEOUT" default:"5s" required:"true"`
 	ReadHeaderTimeOut time.Duration `envconfig:"READ_HEADER_TIMEOUT" default:"5s" required:"true"`
