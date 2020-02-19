@@ -36,7 +36,7 @@ func NewHandler(albumService albums.Service) AlbumHandler {
 	return &handler{albumService}
 }
 
-// Index is responsable for find the latest albums.
+// Index finds the latest albums.
 func (h *handler) Index(w http.ResponseWriter, r *http.Request) {
 	albums, err := h.albumService.FindAll(r.Context())
 	if err != nil {
@@ -47,7 +47,7 @@ func (h *handler) Index(w http.ResponseWriter, r *http.Request) {
 	ToJSON(w, http.StatusOK, &albums)
 }
 
-// Show is responsable for find an album by ID.
+// Show finds an album by ID.
 func (h *handler) Show(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
@@ -64,7 +64,7 @@ func (h *handler) Show(w http.ResponseWriter, r *http.Request) {
 	ToJSON(w, http.StatusOK, album)
 }
 
-// Store is responsable for add new albums.
+// Store adds new albums.
 func (h *handler) Store(w http.ResponseWriter, r *http.Request) {
 	var album albums.Album
 
@@ -87,7 +87,7 @@ func (h *handler) Store(w http.ResponseWriter, r *http.Request) {
 	ToJSON(w, http.StatusOK, &APIMessage{Message: "Created"})
 }
 
-// Update is responsable for update an album by ID.
+// Update updates an album by ID.
 func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
@@ -114,7 +114,7 @@ func (h *handler) Update(w http.ResponseWriter, r *http.Request) {
 	ToJSON(w, http.StatusOK, &APIMessage{Message: "Updated"})
 }
 
-// Delete is responsable for delete an album by ID.
+// Delete deletes an album by ID.
 func (h *handler) Delete(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
