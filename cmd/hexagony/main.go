@@ -24,7 +24,8 @@ func main() {
 		cfg.DBPort, cfg.DBName,
 	)
 
-	mysqlRepository := mysql.NewMysqlRepository(databaseURL)
+	mysqlRepository, conn := mysql.NewMysqlRepository(databaseURL)
+	defer conn.Close()
 
 	albumHandlers := rest.NewHandler(mysqlRepository)
 	router := rest.Router(albumHandlers)
