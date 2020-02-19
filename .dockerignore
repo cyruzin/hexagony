@@ -6,6 +6,4 @@ LICENSE
 Makefile
 NOTICE
 README.md
-arm/
-powerpc/
-mips/
+dist/
