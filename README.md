@@ -2,11 +2,11 @@
 
 [![Build](https://github.com/cyruzin/hexagony/workflows/Build/badge.svg)](https://github.com/cyruzin/hexagony/actions?query=workflow%3ABuild+branch%3Amaster) [![Go Report Card](https://goreportcard.com/badge/github.com/cyruzin/hexagony)](https://goreportcard.com/report/github.com/cyruzin/hexagony) [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
 
-This repo represents my agony to learn this architecture... I'm kidding :) This architecture is amazing and "Hexagony" name was taken from one of the Hate's songs. Hate is a death metal band from Poland, yeap, that's right, I'm a metalhead and I think that the term "Hex" from Hexagonal plus "agony" is a nice combination.
+This architecture is amazing and "Hexagony" name was taken from one of the Hate's songs. Hate is a death metal band from Poland. The term "Hex" from Hexagonal plus "agony" is a nice combination.
 
 ## Status
 
-In development.
+Finished.
 
 ## Install
 
