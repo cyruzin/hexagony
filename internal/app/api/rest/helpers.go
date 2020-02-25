@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
+var json = jsoniter.ConfigFastest
 
 // APIMessage is a struct for generic JSON response.
 type APIMessage struct {
