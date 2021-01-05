@@ -12,7 +12,7 @@ Finished.
 
 First rename the **.env_example** file to **.env** and fill the variables.
 
-Next, make sure that you have Docker and Docker Compose installed and then run the following command:
+Next, make sure you have Docker and Docker Compose installed and then run the following command:
 
 ```sh
 $ docker-compose up
