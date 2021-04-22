@@ -3,11 +3,25 @@ package main
 import (
 	"context"
 	"fmt"
-	"hexagony/internal/app/api/rest"
-	"hexagony/internal/app/config"
-	"hexagony/internal/app/repository/mysql"
 
+	"hexagony/internal/app/config"
+	albumController "hexagony/internal/app/modules/albums/infra/controller"
+	albumRepository "hexagony/internal/app/modules/albums/repository/mysql"
+	sharedMiddleware "hexagony/internal/app/modules/shared/infra/middleware"
+	"net/http"
+	"os"
+	"os/signal"
+
+	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
+	"github.com/go-chi/cors"
+	"github.com/go-chi/render"
+	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/pkgerrors"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func main() {
@@ -16,7 +30,15 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
+
+	if cfg.EnvMode == "development" {
+		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+		log.Debug().Msg("running in development mode")
+	} else {
+		log.Info().Msg("running in production mode")
+		zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+	}
 
 	databaseURL := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?parseTime=true",
@@ -24,11 +46,84 @@ func main() {
 		cfg.DBPort, cfg.DBName,
 	)
 
-	mysqlRepository, conn := mysql.NewMysqlRepository(databaseURL)
+	conn, err := sqlx.ConnectContext(ctx, "mysql", databaseURL)
+	if err != nil {
+		log.Fatal().Err(err).Msg("mysql failed to start")
+	}
 	defer conn.Close()
 
-	albumHandlers := rest.NewHandler(mysqlRepository)
-	router := rest.Router(albumHandlers)
+	if err := conn.PingContext(ctx); err != nil {
+		log.Fatal().
+			Err(err).
+			Stack().
+			Str("database", conn.DriverName()).
+			Msg("could not ping the database")
+	}
 
-	rest.Server(ctx, cfg, router)
+	router := chi.NewRouter()
+
+	cors := cors.New(cors.Options{
+		AllowedOrigins: []string{"*"},
+		AllowedMethods: []string{
+			"GET",
+			"POST",
+			"PUT",
+			"DELETE",
+			"OPTIONS",
+		},
+		AllowedHeaders: []string{
+			"Accept",
+			"Authorization",
+			"Content-Type",
+		},
+		ExposedHeaders:   []string{"Link"},
+		AllowCredentials: true,
+		MaxAge:           300,
+	})
+
+	router.Use(
+		cors.Handler,
+		middleware.Timeout(cfg.MiddlewareTimeOut),
+		render.SetContentType(render.ContentTypeJSON),
+		sharedMiddleware.LoggerMiddleware,
+	)
+
+	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("Hexagony v1.0"))
+	})
+
+	albumRepository := albumRepository.NewMysqlRepository(conn)
+	albumController.NewAlbumHandler(router, albumRepository)
+
+	srv := &http.Server{
+		Addr:              ":" + cfg.Port,
+		ReadTimeout:       cfg.ReadTimeOut,
+		ReadHeaderTimeout: cfg.ReadHeaderTimeOut,
+		WriteTimeout:      cfg.WriteTimeOut,
+		IdleTimeout:       cfg.IdleTimeOut,
+		Handler:           router,
+	}
+
+	idleConnsClosed := make(chan struct{})
+
+	go func() {
+		gracefulStop := make(chan os.Signal, 1)
+		signal.Notify(gracefulStop, os.Interrupt)
+		<-gracefulStop
+
+		log.Info().Msg("shutting down the server...")
+		if err := srv.Shutdown(ctx); err != nil {
+			log.Error().Err(err).Msg("server failed to shutdown")
+		}
+		close(idleConnsClosed)
+	}()
+
+	log.Info().Msgf("listening on port: %s", cfg.Port)
+	log.Info().Msg("you're good to go! :)")
+
+	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
+		log.Error().Err(err).Msg("server failed to start")
+	}
+
+	<-idleConnsClosed
 }
