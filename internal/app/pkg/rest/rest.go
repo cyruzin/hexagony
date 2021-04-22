@@ -15,16 +15,10 @@ type APIMessage struct {
 	Status  int    `json:"status,omitempty"`
 }
 
-// InvalidRequest handles API errors.
-func InvalidRequest(
-	w http.ResponseWriter,
-	r *http.Request,
-	err error,
-	message string,
-	httpCode int,
-) {
+func DecodeError(w http.ResponseWriter, r *http.Request, err error, httpCode int) {
 	log.Error().
 		Err(err).
+		Stack().
 		Str("method", r.Method).
 		Str("url", r.URL.String()).
 		Str("agent", r.UserAgent()).
@@ -32,22 +26,17 @@ func InvalidRequest(
 		Str("proto", r.Proto).
 		Str("remote_address", r.RemoteAddr).
 		Int("status", httpCode).
-		Msg(message)
+		Msg(err.Error())
 
 	w.WriteHeader(httpCode)
 
-	apiError := &APIMessage{message, httpCode}
+	apiError := &APIMessage{err.Error(), httpCode}
 	if err := json.NewEncoder(w).Encode(apiError); err != nil {
 		return
 	}
 }
 
-// ToJSON returns a JSON response.
-func ToJSON(
-	w http.ResponseWriter,
-	httpCode int,
-	dest interface{},
-) {
+func EncodeJSON(w http.ResponseWriter, httpCode int, dest interface{}) {
 	w.WriteHeader(httpCode)
 	json.NewEncoder(w).Encode(dest)
 }

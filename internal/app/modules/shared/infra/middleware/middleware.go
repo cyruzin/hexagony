@@ -1,4 +1,4 @@
-package rest
+package middleware
 
 import (
 	"net/http"
@@ -7,7 +7,6 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// LoggerMiddleware logs the details of all requests.
 func LoggerMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()

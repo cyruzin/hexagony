@@ -3,39 +3,26 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"errors"
-	"hexagony/internal/app/albums"
+	"hexagony/internal/app/domain"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
-
-	// Mysql connection
-	_ "github.com/go-sql-driver/mysql"
-)
-
-const (
-	errResourceNotFound = "The resource you requested could not be found"
 )
 
 type mysqlRepository struct {
-	client *sqlx.DB
+	conn *sqlx.DB
 }
 
-// NewMysqlRepository creates a instance of MySQL that access the albums repository.
-func NewMysqlRepository(
-	dataSourceName string,
-) (albums.Repository, *sqlx.DB) {
-	client := sqlx.MustConnect("mysql", dataSourceName)
-	return &mysqlRepository{client}, client
+func NewMysqlRepository(conn *sqlx.DB) domain.AlbumRepository {
+	return &mysqlRepository{conn}
 }
 
-// FindAll finds the latest albums.
 func (r *mysqlRepository) FindAll(
 	ctx context.Context,
-) ([]*albums.Album, error) {
-	var album []*albums.Album
+) ([]*domain.Album, error) {
+	var album []*domain.Album
 
-	err := r.client.SelectContext(
+	err := r.conn.SelectContext(
 		ctx,
 		&album,
 		sqlFindAll,
@@ -47,14 +34,13 @@ func (r *mysqlRepository) FindAll(
 	return album, nil
 }
 
-// FindByID finds an album by ID.
 func (r *mysqlRepository) FindByID(
 	ctx context.Context,
 	uuid uuid.UUID,
-) (*albums.Album, error) {
-	var album albums.Album
+) (*domain.Album, error) {
+	var album domain.Album
 
-	err := r.client.GetContext(
+	err := r.conn.GetContext(
 		ctx,
 		&album,
 		sqlFindByID,
@@ -65,18 +51,17 @@ func (r *mysqlRepository) FindByID(
 	}
 
 	if album.Name == "" {
-		return nil, errors.New(errResourceNotFound)
+		return nil, domain.ErrResourceNotFound
 	}
 
 	return &album, nil
 }
 
-// Add adds a new album.
 func (r *mysqlRepository) Add(
 	ctx context.Context,
-	album *albums.Album,
+	album *domain.Album,
 ) error {
-	if _, err := r.client.ExecContext(
+	if _, err := r.conn.ExecContext(
 		ctx,
 		sqlAdd,
 		album.UUID,
@@ -91,13 +76,12 @@ func (r *mysqlRepository) Add(
 	return nil
 }
 
-// Update updates an album by ID.
 func (r *mysqlRepository) Update(
 	ctx context.Context,
 	uuid uuid.UUID,
-	album *albums.Album,
+	album *domain.Album,
 ) error {
-	result, err := r.client.ExecContext(
+	result, err := r.conn.ExecContext(
 		ctx,
 		sqlUpdate,
 		album.Name,
@@ -115,18 +99,17 @@ func (r *mysqlRepository) Update(
 	}
 
 	if rowsAffected == 0 {
-		return errors.New(errResourceNotFound)
+		return domain.ErrResourceNotFound
 	}
 
 	return nil
 }
 
-// Delete deletes an album by ID.
 func (r *mysqlRepository) Delete(
 	ctx context.Context,
 	uuid uuid.UUID,
 ) error {
-	result, err := r.client.ExecContext(
+	result, err := r.conn.ExecContext(
 		ctx,
 		sqlDelete,
 		uuid,
@@ -141,7 +124,7 @@ func (r *mysqlRepository) Delete(
 	}
 
 	if rowsAffected == 0 {
-		return errors.New(errResourceNotFound)
+		return domain.ErrResourceNotFound
 	}
 
 	return nil

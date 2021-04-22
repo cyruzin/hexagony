@@ -1,4 +1,4 @@
-FROM golang:1.13.8 as build-stage
+FROM golang:1.16.3 as build
 
 WORKDIR /go/src/github.com/cyruzin/hexagony
 
@@ -12,7 +12,7 @@ FROM alpine:latest
 
 RUN apk add ca-certificates
 
-COPY --from=build-stage /go/bin/hexagony .
+COPY --from=build /go/bin/hexagony .
 
 EXPOSE 8000
 
