@@ -18,7 +18,7 @@ func TestFindAll(t *testing.T) {
 	mockAlbum := &domain.Album{
 		UUID:      uuid.New(),
 		Name:      "St. Anger",
-		Length:    60,
+		Length:    75,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
@@ -61,7 +61,7 @@ func TestFindByID(t *testing.T) {
 	mockAlbum := &domain.Album{
 		UUID:      newUUID,
 		Name:      "St. Anger",
-		Length:    60,
+		Length:    75,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
@@ -100,7 +100,7 @@ func TestAdd(t *testing.T) {
 	mockAlbum := &domain.Album{
 		UUID:      uuid.New(),
 		Name:      "St. Anger",
-		Length:    60,
+		Length:    75,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
@@ -139,7 +139,7 @@ func TestUpdate(t *testing.T) {
 	mockAlbum := &domain.Album{
 		UUID:      newUUID,
 		Name:      "St. Anger",
-		Length:    60,
+		Length:    75,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
