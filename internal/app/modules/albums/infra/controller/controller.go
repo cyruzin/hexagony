@@ -72,7 +72,7 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rest.EncodeJSON(w, http.StatusOK, &rest.APIMessage{Message: "Created"})
+	rest.EncodeJSON(w, http.StatusCreated, &rest.APIMessage{Message: "Created"})
 }
 
 func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
