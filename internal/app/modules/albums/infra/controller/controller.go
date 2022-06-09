@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 	"hexagony/internal/app/domain"
 	"hexagony/internal/app/pkg/rest"
+	"hexagony/internal/app/pkg/validation"
 	"net/http"
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 )
 
@@ -62,6 +64,11 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	if err := validator.New().StructCtx(r.Context(), album); err != nil {
+		validation.Message(w, err)
+		return
+	}
+
 	album.UUID = uuid.New()
 	album.CreatedAt = time.Now()
 	album.UpdatedAt = time.Now()
@@ -87,6 +94,11 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 	err = json.NewDecoder(r.Body).Decode(&album)
 	if err != nil {
 		rest.DecodeError(w, r, domain.ErrUpdate, http.StatusUnprocessableEntity)
+		return
+	}
+
+	if err := validator.New().StructCtx(r.Context(), album); err != nil {
+		validation.Message(w, err)
 		return
 	}
 

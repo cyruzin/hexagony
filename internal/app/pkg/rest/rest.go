@@ -1,13 +1,11 @@
 package rest
 
 import (
+	"encoding/json"
 	"net/http"
 
-	jsoniter "github.com/json-iterator/go"
 	"github.com/rs/zerolog/log"
 )
-
-var json = jsoniter.ConfigFastest
 
 // APIMessage is a struct for generic JSON response.
 type APIMessage struct {
