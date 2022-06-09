@@ -32,7 +32,7 @@ func NewAlbumHandler(c *chi.Mux, as domain.AlbumUseCase) {
 // FindAll godoc
 // @Summary      List of albums
 // @Description  lists all albums
-// @Tags         albums
+// @Tags         album
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  []domain.Album
