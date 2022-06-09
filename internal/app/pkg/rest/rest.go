@@ -36,5 +36,7 @@ func DecodeError(w http.ResponseWriter, r *http.Request, err error, httpCode int
 
 func EncodeJSON(w http.ResponseWriter, httpCode int, dest interface{}) {
 	w.WriteHeader(httpCode)
-	json.NewEncoder(w).Encode(dest)
+	if err := json.NewEncoder(w).Encode(dest); err != nil {
+		return
+	}
 }

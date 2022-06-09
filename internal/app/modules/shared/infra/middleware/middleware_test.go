@@ -19,7 +19,9 @@ func TestLoggerMiddleware(t *testing.T) {
 	router.Use(LoggerMiddleware)
 
 	router.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hexagony v1.0"))
+		if _, err := w.Write([]byte("Hexagony v1.0")); err != nil {
+			t.Error(err)
+		}
 	})
 
 	router.ServeHTTP(rec, req)

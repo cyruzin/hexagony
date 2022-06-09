@@ -42,7 +42,9 @@ func Message(w http.ResponseWriter, err error) {
 	}
 
 	if err := json.NewEncoder(w).Encode(apiValidator); err != nil {
-		w.Write([]byte("could not encode the payload"))
+		if _, err := w.Write([]byte("could not encode the payload")); err != nil {
+			return
+		}
 		return
 	}
 }

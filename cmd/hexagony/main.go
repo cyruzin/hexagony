@@ -105,7 +105,9 @@ func main() {
 	)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("Hexagony v1.0"))
+		if _, err := w.Write([]byte("Hexagony v1.0")); err != nil {
+			return
+		}
 	})
 
 	router.Get("/docs/*", httpSwagger.WrapHandler)
