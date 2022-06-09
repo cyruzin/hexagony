@@ -34,7 +34,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "albums"
+                    "album"
                 ],
                 "summary": "List of albums",
                 "responses": {

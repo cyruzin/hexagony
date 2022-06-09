@@ -56,7 +56,7 @@ paths:
             $ref: '#/definitions/rest.APIMessage'
       summary: List of albums
       tags:
-      - albums
+      - album
     post:
       consumes:
       - application/json
