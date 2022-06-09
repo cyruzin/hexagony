@@ -9,7 +9,7 @@ services:
     volumes:
       - ./db:/docker-entrypoint-initdb.d
     ports:
-      - 3306:3306
+      - ${DBPORT}:${DBPORT}
     environment:
       - MYSQL_ROOT_PASSWORD=$DBPASS
 
@@ -21,6 +21,7 @@ services:
     restart: always
     ports:
       - ${PORT}:${PORT}
-    env_file: .env
+    env_file: 
+      - .env
     depends_on:
       - mysql
