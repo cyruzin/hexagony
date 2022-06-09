@@ -26,6 +26,12 @@ Then, check the app up and running: http://localhost:8000.
 
 Access: http://localhost:8000/docs/index.html
 
+Generate doc: 
+
+```sh
+$ swag init -g .\cmd\hexagony\main.go
+```
+
 ## Schema
 
 Download the schema inside the folder **api/insomnia-schema** and import in your Insomnia application or another request tool.
