@@ -1,0 +1,60 @@
+basePath: /
+definitions:
+  domain.Album:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: string
+      length:
+        type: integer
+      name:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - length
+    - name
+    type: object
+  rest.APIMessage:
+    properties:
+      message:
+        type: string
+      status:
+        type: integer
+    type: object
+host: localhost:8000
+info:
+  contact:
+    email: xorycx@gmail.com
+    name: Cyro Dubeux
+    url: https://github.com/cyruzin/hexagony/issues/new
+  description: Clean architecture example in Golang.
+  license:
+    name: MIT
+    url: https://github.com/cyruzin/hexagony/blob/master/LICENSE
+  title: Hexagony API
+  version: "1.0"
+paths:
+  /album:
+    get:
+      consumes:
+      - application/json
+      description: get albums
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.Album'
+            type: array
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.APIMessage'
+      summary: Show all albums
+      tags:
+      - albums
+swagger: "2.0"

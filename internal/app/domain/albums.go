@@ -10,9 +10,9 @@ import (
 type Album struct {
 	UUID      uuid.UUID     `db:"uuid" json:"id"`
 	Name      string        `json:"name" validate:"required"`
-	Length    time.Duration `json:"length" validate:"required"`
-	CreatedAt time.Time     `db:"created_at" json:"created_at"`
-	UpdatedAt time.Time     `db:"updated_at" json:"updated_at"`
+	Length    time.Duration `json:"length" validate:"required" swaggertype:"primitive,integer"`
+	CreatedAt time.Time     `db:"created_at" json:"created_at" `
+	UpdatedAt time.Time     `db:"updated_at" json:"updated_at" `
 }
 
 type AlbumRepository interface {

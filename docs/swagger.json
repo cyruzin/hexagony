@@ -1,0 +1,90 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Clean architecture example in Golang.",
+        "title": "Hexagony API",
+        "contact": {
+            "name": "Cyro Dubeux",
+            "url": "https://github.com/cyruzin/hexagony/issues/new",
+            "email": "xorycx@gmail.com"
+        },
+        "license": {
+            "name": "MIT",
+            "url": "https://github.com/cyruzin/hexagony/blob/master/LICENSE"
+        },
+        "version": "1.0"
+    },
+    "host": "localhost:8000",
+    "basePath": "/",
+    "paths": {
+        "/album": {
+            "get": {
+                "description": "get albums",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "albums"
+                ],
+                "summary": "Show all albums",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/domain.Album"
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/rest.APIMessage"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "domain.Album": {
+            "type": "object",
+            "required": [
+                "length",
+                "name"
+            ],
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "length": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
+                }
+            }
+        },
+        "rest.APIMessage": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "integer"
+                }
+            }
+        }
+    }
+}

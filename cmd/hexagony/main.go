@@ -20,10 +20,26 @@ import (
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/rs/zerolog/pkgerrors"
+	httpSwagger "github.com/swaggo/http-swagger"
+
+	_ "hexagony/docs"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
+// @title           Hexagony API
+// @version         1.0
+// @description     Clean architecture example in Golang.
+
+// @contact.name   Cyro Dubeux
+// @contact.url    https://github.com/cyruzin/hexagony/issues/new
+// @contact.email  xorycx@gmail.com
+
+// @license.name  MIT
+// @license.url   https://github.com/cyruzin/hexagony/blob/master/LICENSE
+
+// @host      localhost:8000
+// @BasePath  /
 func main() {
 	cfg := config.Load()
 
@@ -91,6 +107,8 @@ func main() {
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Hexagony v1.0"))
 	})
+
+	router.Get("/docs/*", httpSwagger.WrapHandler)
 
 	albumRepository := albumRepository.NewMysqlRepository(conn)
 	albumController.NewAlbumHandler(router, albumRepository)

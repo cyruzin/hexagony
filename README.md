@@ -4,21 +4,27 @@
 
 This architecture is amazing and "Hexagony" name was taken from one of the Hate's songs. Hate is a death metal band from Poland. The term "Hex" from Hexagonal plus "agony" is a nice combination.
 
-## Status
+## Running
 
-Finished.
-
-## Install
-
-First rename the **.env_example** file to **.env** and fill the variables.
+First rename the **.env_example** file to **.env** and fill the variables if you want.
 
 Next, make sure you have Docker and Docker Compose installed and then run the following command:
 
 ```sh
-$ docker-compose up
+$ docker-compose up --build
+```
+
+Or in Detached Mode:
+
+```sh
+$ docker-compose up -d --build 
 ```
 
 Then, check the app up and running: http://localhost:8000.
+
+## Documentation
+
+Access: http://localhost:8000/docs/index.html
 
 ## Schema
 
