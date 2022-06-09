@@ -61,6 +61,13 @@ paths:
       consumes:
       - application/json
       description: add a new album
+      parameters:
+      - description: add a new album
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Album'
       produces:
       - application/json
       responses:
@@ -75,11 +82,17 @@ paths:
       summary: Add an album
       tags:
       - album
-  /album/:uuid:
+  /album/{uuid}:
     delete:
       consumes:
       - application/json
       description: delete an album by uuid
+      parameters:
+      - description: album uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -98,6 +111,12 @@ paths:
       consumes:
       - application/json
       description: lists an album by uuid
+      parameters:
+      - description: album uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -116,6 +135,18 @@ paths:
       consumes:
       - application/json
       description: update an album by uuid
+      parameters:
+      - description: album uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: update an album by uuid
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/domain.Album'
       produces:
       - application/json
       responses:

@@ -27,9 +27,9 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-// @title           Hexagony API
-// @version         1.0
-// @description     Clean architecture example in Golang.
+// @title        Hexagony API
+// @version      1.0
+// @description  Clean architecture example in Golang.
 
 // @contact.name   Cyro Dubeux
 // @contact.url    https://github.com/cyruzin/hexagony/issues/new

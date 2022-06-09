@@ -67,6 +67,17 @@ const docTemplate = `{
                     "album"
                 ],
                 "summary": "Add an album",
+                "parameters": [
+                    {
+                        "description": "add a new album",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Album"
+                        }
+                    }
+                ],
                 "responses": {
                     "201": {
                         "description": "Created",
@@ -83,7 +94,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/album/:uuid": {
+        "/album/{uuid}": {
             "get": {
                 "description": "lists an album by uuid",
                 "consumes": [
@@ -96,6 +107,15 @@ const docTemplate = `{
                     "album"
                 ],
                 "summary": "List an album",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "album uuid",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -123,6 +143,24 @@ const docTemplate = `{
                     "album"
                 ],
                 "summary": "Update an album",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "album uuid",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "update an album by uuid",
+                        "name": "payload",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/domain.Album"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -150,6 +188,15 @@ const docTemplate = `{
                     "album"
                 ],
                 "summary": "Delete an album",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "album uuid",
+                        "name": "uuid",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
