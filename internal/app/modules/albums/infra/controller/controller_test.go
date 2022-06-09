@@ -3,6 +3,7 @@ package controller
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"hexagony/internal/app/domain"
 	"hexagony/internal/app/domain/mocks"
 	"net/http"
@@ -240,6 +241,26 @@ func TestAddFail(t *testing.T) {
 	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
 
 	mockAlbumUseCase.AssertExpectations(t)
+
+	// validation errors
+
+	mockAlbumUseCase.
+		On("Add", mock.Anything, mock.Anything).
+		Return(errors.New("the length field is required"))
+
+	mockAlbum3 := []byte(`{"name":"Nova Era"}`)
+
+	req, err = http.NewRequest(http.MethodPost, "/album", bytes.NewBuffer(mockAlbum3))
+	assert.NoError(t, err)
+
+	rec = httptest.NewRecorder()
+
+	router.HandleFunc("/album", handler.Add)
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+
+	mockAlbumUseCase.AssertExpectations(t)
 }
 
 func TestUpdate(t *testing.T) {
@@ -342,6 +363,26 @@ func TestUpdateFail(t *testing.T) {
 	router.ServeHTTP(rec, req)
 
 	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+
+	mockAlbumUseCase.AssertExpectations(t)
+
+	// validation errors
+
+	mockAlbumUseCase.
+		On("Update", mock.Anything, mock.Anything, mock.Anything).
+		Return(errors.New("the length field is required"))
+
+	mockAlbum3 := []byte(`{"name":"Nova Era"}`)
+
+	req, err = http.NewRequest(http.MethodPut, "/album/"+newUUID.String(), bytes.NewBuffer(mockAlbum3))
+	assert.NoError(t, err)
+
+	rec = httptest.NewRecorder()
+
+	router.HandleFunc("/album/{uuid}", handler.Update)
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
 
 	mockAlbumUseCase.AssertExpectations(t)
 }
