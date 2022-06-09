@@ -2,7 +2,7 @@
 
 [![build](https://github.com/cyruzin/hexagony/workflows/build/badge.svg)](https://github.com/cyruzin/hexagony/actions?query=workflow%3Abuild+branch%3Amaster) [![Coverage Status](https://coveralls.io/repos/github/cyruzin/hexagony/badge.svg?branch=master)](https://coveralls.io/github/cyruzin/hexagony?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/cyruzin/hexagony)](https://goreportcard.com/report/github.com/cyruzin/hexagony) [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
 
-This architecture is amazing and "Hexagony" name was taken from one of the Hate's songs. Hate is a death metal band from Poland. The term "Hex" from Hexagonal plus "agony" is a nice combination.
+Hexagony name was taken from one of the Hate's songs. Hate is a death metal band from Poland.
 
 ## Running
 
