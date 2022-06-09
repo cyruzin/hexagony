@@ -26,7 +26,7 @@ const docTemplate = `{
     "paths": {
         "/album": {
             "get": {
-                "description": "get albums",
+                "description": "lists all albums",
                 "consumes": [
                     "application/json"
                 ],
@@ -36,7 +36,7 @@ const docTemplate = `{
                 "tags": [
                     "albums"
                 ],
-                "summary": "Show all albums",
+                "summary": "List of albums",
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -45,6 +45,116 @@ const docTemplate = `{
                             "items": {
                                 "$ref": "#/definitions/domain.Album"
                             }
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/rest.APIMessage"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "add a new album",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "album"
+                ],
+                "summary": "Add an album",
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/rest.APIMessage"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/rest.APIMessage"
+                        }
+                    }
+                }
+            }
+        },
+        "/album/:uuid": {
+            "get": {
+                "description": "lists an album by uuid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "album"
+                ],
+                "summary": "List an album",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/domain.Album"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/rest.APIMessage"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "description": "update an album by uuid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "album"
+                ],
+                "summary": "Update an album",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.APIMessage"
+                        }
+                    },
+                    "422": {
+                        "description": "Unprocessable Entity",
+                        "schema": {
+                            "$ref": "#/definitions/rest.APIMessage"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "delete an album by uuid",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "album"
+                ],
+                "summary": "Delete an album",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/rest.APIMessage"
                         }
                     },
                     "422": {

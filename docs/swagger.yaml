@@ -40,7 +40,7 @@ paths:
     get:
       consumes:
       - application/json
-      description: get albums
+      description: lists all albums
       produces:
       - application/json
       responses:
@@ -54,7 +54,80 @@ paths:
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/rest.APIMessage'
-      summary: Show all albums
+      summary: List of albums
       tags:
       - albums
+    post:
+      consumes:
+      - application/json
+      description: add a new album
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/rest.APIMessage'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.APIMessage'
+      summary: Add an album
+      tags:
+      - album
+  /album/:uuid:
+    delete:
+      consumes:
+      - application/json
+      description: delete an album by uuid
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.APIMessage'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.APIMessage'
+      summary: Delete an album
+      tags:
+      - album
+    get:
+      consumes:
+      - application/json
+      description: lists an album by uuid
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.Album'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.APIMessage'
+      summary: List an album
+      tags:
+      - album
+    put:
+      consumes:
+      - application/json
+      description: update an album by uuid
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.APIMessage'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.APIMessage'
+      summary: Update an album
+      tags:
+      - album
 swagger: "2.0"
