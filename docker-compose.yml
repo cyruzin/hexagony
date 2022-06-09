@@ -20,7 +20,7 @@ services:
     hostname: hexagony-api
     restart: always
     ports:
-      - 8000:8000
+      - ${PORT}:${PORT}
     env_file: .env
     depends_on:
       - mysql
