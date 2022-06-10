@@ -29,7 +29,7 @@ Access: http://localhost:8000/docs/index.html
 Generate doc: 
 
 ```sh
-$ swag init -g .\cmd\hexagony\main.go
+$ swag init -g ./cmd/hexagony/main.go
 ```
 
 ## Schema
