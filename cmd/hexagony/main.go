@@ -7,7 +7,6 @@ import (
 	"hexagony/internal/app/config"
 	albumController "hexagony/internal/app/modules/albums/infra/controller"
 	albumRepository "hexagony/internal/app/modules/albums/repository/mysql"
-	sharedMiddleware "hexagony/internal/app/modules/shared/infra/middleware"
 	"net/http"
 	"os"
 	"os/signal"
@@ -99,9 +98,12 @@ func main() {
 
 	router.Use(
 		cors.Handler,
-		middleware.Timeout(cfg.MiddlewareTimeOut),
 		render.SetContentType(render.ContentTypeJSON),
-		sharedMiddleware.LoggerMiddleware,
+		middleware.RequestID,
+		middleware.RealIP,
+		middleware.Logger,
+		middleware.Recoverer,
+		middleware.Timeout(cfg.MiddlewareTimeOut),
 	)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
