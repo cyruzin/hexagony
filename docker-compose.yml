@@ -2,16 +2,23 @@ version: "3.9"
 
 services:
   mysql:
-    image: mysql:5.7.34
+    image: mysql:5.7.38
     container_name: hexagony-database
     hostname: hexagony-database
     restart: always
     volumes:
       - ./db:/docker-entrypoint-initdb.d
+      - ./db/.data:/var/lib/mysql
     ports:
-      - 3306:3306
+      - ${DB_PORT}:${DB_PORT}
     environment:
-      - MYSQL_ROOT_PASSWORD=$DBPASS
+      - MYSQL_ROOT_PASSWORD=${DB_PASS}
+    healthcheck:
+      test: ["CMD", "mysqladmin", "-u$DB_USER", "-p$DB_PASS", "ping", "-h", "localhost"]
+      interval: 20s
+      timeout: 30s
+      retries: 3
+    env_file: .env
 
   api:
     build:
@@ -20,8 +27,8 @@ services:
     hostname: hexagony-api
     restart: always
     ports:
-      - 8000:8000
-    env_file: 
-      - .env
+      - ${PORT}:${PORT}
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
+    env_file: .env

@@ -3,8 +3,8 @@ package controller
 import (
 	"encoding/json"
 	"hexagony/internal/app/domain"
-	"hexagony/internal/app/pkg/rest"
-	"hexagony/internal/app/pkg/validation"
+	"hexagony/lib/rest"
+	"hexagony/lib/validation"
 	"net/http"
 	"time"
 

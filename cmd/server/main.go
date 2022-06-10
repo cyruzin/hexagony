@@ -3,10 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"time"
 
-	"hexagony/internal/app/config"
-	albumController "hexagony/internal/app/modules/albums/infra/controller"
-	albumRepository "hexagony/internal/app/modules/albums/repository/mysql"
+	albumController "hexagony/internal/app/albums/infra/controller"
+	albumRepository "hexagony/internal/app/albums/repository/mysql"
 	"net/http"
 	"os"
 	"os/signal"
@@ -40,14 +40,12 @@ import (
 // @host      localhost:8000
 // @BasePath  /
 func main() {
-	cfg := config.Load()
-
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
 
-	if cfg.EnvMode == "development" {
+	if os.Getenv("ENV_MODE") == "development" {
 		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 		log.Debug().Msg("running in development mode")
 	} else {
@@ -57,8 +55,8 @@ func main() {
 
 	databaseURL := fmt.Sprintf(
 		"%s:%s@tcp(%s:%s)/%s?parseTime=true",
-		cfg.DBUser, cfg.DBPass, cfg.DBHost,
-		cfg.DBPort, cfg.DBName,
+		os.Getenv("DB_USER"), os.Getenv("DB_PASS"), os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"), os.Getenv("DB_NAME"),
 	)
 
 	conn, err := sqlx.ConnectContext(ctx, "mysql", databaseURL)
@@ -103,7 +101,7 @@ func main() {
 		middleware.RealIP,
 		middleware.Logger,
 		middleware.Recoverer,
-		middleware.Timeout(cfg.MiddlewareTimeOut),
+		middleware.Timeout(time.Second*60),
 	)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
@@ -118,11 +116,11 @@ func main() {
 	albumController.NewAlbumHandler(router, albumRepository)
 
 	srv := &http.Server{
-		Addr:              ":" + cfg.Port,
-		ReadTimeout:       cfg.ReadTimeOut,
-		ReadHeaderTimeout: cfg.ReadHeaderTimeOut,
-		WriteTimeout:      cfg.WriteTimeOut,
-		IdleTimeout:       cfg.IdleTimeOut,
+		Addr:              ":" + os.Getenv("PORT"),
+		ReadTimeout:       time.Duration(time.Second * 5),
+		ReadHeaderTimeout: time.Duration(time.Second * 5),
+		WriteTimeout:      time.Duration(time.Second * 5),
+		IdleTimeout:       time.Duration(time.Second * 60),
 		Handler:           router,
 	}
 
@@ -140,7 +138,7 @@ func main() {
 		close(idleConnsClosed)
 	}()
 
-	log.Info().Msgf("listening on port: %s", cfg.Port)
+	log.Info().Msgf("listening on port: %s", os.Getenv("PORT"))
 	log.Info().Msg("you're good to go! :)")
 
 	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
