@@ -19,3 +19,6 @@
 *.env
 
 db/.data
+
+# MacOS
+.DS_Store
