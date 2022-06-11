@@ -3,7 +3,7 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"hexagony/internal/app/domain"
+	"hexagony/domain"
 	"regexp"
 	"testing"
 	"time"

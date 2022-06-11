@@ -2,17 +2,17 @@ package mocks
 
 import (
 	"context"
-	"hexagony/internal/app/domain"
+	"hexagony/domain"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
 )
 
-type AlbumRepository struct {
+type AlbumUseCase struct {
 	mock.Mock
 }
 
-func (m *AlbumRepository) FindAll(ctx context.Context) ([]*domain.Album, error) {
+func (m *AlbumUseCase) FindAll(ctx context.Context) ([]*domain.Album, error) {
 	args := m.Called(ctx)
 
 	var album []*domain.Album
@@ -35,7 +35,7 @@ func (m *AlbumRepository) FindAll(ctx context.Context) ([]*domain.Album, error) 
 	return album, err
 }
 
-func (m *AlbumRepository) FindByID(ctx context.Context, id uuid.UUID) (*domain.Album, error) {
+func (m *AlbumUseCase) FindByID(ctx context.Context, id uuid.UUID) (*domain.Album, error) {
 	args := m.Called(ctx, id)
 
 	var album *domain.Album
@@ -59,7 +59,7 @@ func (m *AlbumRepository) FindByID(ctx context.Context, id uuid.UUID) (*domain.A
 	return album, err
 }
 
-func (m *AlbumRepository) Add(ctx context.Context, album *domain.Album) error {
+func (m *AlbumUseCase) Add(ctx context.Context, album *domain.Album) error {
 	args := m.Called(ctx, album)
 
 	var err error
@@ -73,7 +73,7 @@ func (m *AlbumRepository) Add(ctx context.Context, album *domain.Album) error {
 	return err
 }
 
-func (m *AlbumRepository) Update(ctx context.Context, id uuid.UUID, album *domain.Album) error {
+func (m *AlbumUseCase) Update(ctx context.Context, id uuid.UUID, album *domain.Album) error {
 	args := m.Called(ctx, id, album)
 
 	var err error
@@ -87,7 +87,7 @@ func (m *AlbumRepository) Update(ctx context.Context, id uuid.UUID, album *domai
 	return err
 }
 
-func (m *AlbumRepository) Delete(ctx context.Context, id uuid.UUID) error {
+func (m *AlbumUseCase) Delete(ctx context.Context, id uuid.UUID) error {
 	args := m.Called(ctx, id)
 
 	var err error

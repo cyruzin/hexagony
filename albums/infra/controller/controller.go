@@ -2,7 +2,7 @@ package controller
 
 import (
 	"encoding/json"
-	"hexagony/internal/app/domain"
+	"hexagony/domain"
 	"hexagony/lib/rest"
 	"hexagony/lib/validation"
 	"net/http"

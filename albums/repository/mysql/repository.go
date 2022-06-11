@@ -3,7 +3,7 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"hexagony/internal/app/domain"
+	"hexagony/domain"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"

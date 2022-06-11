@@ -2,7 +2,7 @@ package usecase
 
 import (
 	"context"
-	"hexagony/internal/app/domain"
+	"hexagony/domain"
 
 	"github.com/google/uuid"
 )

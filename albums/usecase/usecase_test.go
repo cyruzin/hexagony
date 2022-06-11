@@ -3,8 +3,8 @@ package usecase
 import (
 	"context"
 	"errors"
-	"hexagony/internal/app/domain"
-	"hexagony/internal/app/domain/mocks"
+	"hexagony/domain"
+	"hexagony/domain/mocks"
 	"testing"
 	"time"
 

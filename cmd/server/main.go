@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"time"
 
-	albumController "hexagony/internal/app/albums/infra/controller"
-	albumRepository "hexagony/internal/app/albums/repository/mysql"
+	albumController "hexagony/albums/infra/controller"
+	albumRepository "hexagony/albums/repository/mysql"
 	"net/http"
 	"os"
 	"os/signal"
