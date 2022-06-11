@@ -1,19 +1,23 @@
-FROM golang:1.18.3 as build
+FROM golang:1.18.3-alpine as build
 
-WORKDIR /go/src/github.com/cyruzin/hexagony
+WORKDIR /app
 
-COPY . .
+COPY go.* ./
 
-RUN go get -d -v ./...
+RUN go mod download
 
-RUN CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go install -a -tags netgo -ldflags '-w -extldflags "-static"' ./cmd/server
+COPY . ./
+
+WORKDIR ./cmd/server
+
+RUN go build -v -o server
 
 FROM alpine:latest  
 
 RUN apk add ca-certificates
 
-COPY --from=build /go/bin/server .
+COPY --from=build /app/cmd/server /app/server
 
 EXPOSE 8000
 
-CMD ["./server"]
+CMD ["/app/server/server"]

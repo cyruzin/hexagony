@@ -1,8 +1,8 @@
 version: "3.9"
 
 services:
-  mysql:
-    image: mysql:5.7.38
+  mariadb:
+    image: mariadb:10.8.3
     container_name: hexagony-database
     hostname: hexagony-database
     restart: always
@@ -12,7 +12,7 @@ services:
     ports:
       - ${DB_PORT}:${DB_PORT}
     environment:
-      - MYSQL_ROOT_PASSWORD=${DB_PASS}
+      - MARIADB_ROOT_PASSWORD=${DB_PASS}
     healthcheck:
       test: ["CMD", "mysqladmin", "-u$DB_USER", "-p$DB_PASS", "ping", "-h", "localhost"]
       interval: 20s
@@ -29,6 +29,6 @@ services:
     ports:
       - ${PORT}:${PORT}
     depends_on:
-      mysql:
+      mariadb:
         condition: service_healthy
     env_file: .env
