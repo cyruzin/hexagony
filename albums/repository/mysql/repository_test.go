@@ -3,7 +3,7 @@ package mysql
 import (
 	"context"
 	"database/sql"
-	"hexagony/domain"
+	"hexagony/albums/domain"
 	"regexp"
 	"testing"
 	"time"

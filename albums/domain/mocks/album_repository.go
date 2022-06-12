@@ -2,7 +2,7 @@ package mocks
 
 import (
 	"context"
-	"hexagony/domain"
+	"hexagony/albums/domain"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/mock"
