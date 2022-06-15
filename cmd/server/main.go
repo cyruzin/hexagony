@@ -45,7 +45,6 @@ func main() {
 		clog.Debug("running in development mode")
 	} else {
 		clog.Info("running in production mode")
-		clog.UseTimeFormatUnix()
 	}
 
 	databaseURL := fmt.Sprintf(
@@ -110,7 +109,7 @@ func main() {
 		ReadTimeout:       time.Duration(time.Second * 5),
 		ReadHeaderTimeout: time.Duration(time.Second * 5),
 		WriteTimeout:      time.Duration(time.Second * 5),
-		IdleTimeout:       time.Duration(time.Second * 60),
+		IdleTimeout:       time.Duration(time.Second * 20),
 		Handler:           router,
 	}
 

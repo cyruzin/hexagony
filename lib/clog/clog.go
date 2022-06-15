@@ -5,10 +5,7 @@ import (
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"github.com/rs/zerolog/pkgerrors"
 )
-
-var Clog CLog
 
 type CLog interface {
 	Error(err error, msg string)
@@ -20,7 +17,7 @@ type CLog interface {
 }
 
 func Error(err error, msg string) {
-	log.Error().Err(err).Stack().Msg(msg)
+	log.Error().Stack().Err(err).Msg(msg)
 }
 
 func Debug(msg string) {
@@ -43,14 +40,6 @@ func Panic(msg string) {
 	log.Panic().Stack().Msg(msg)
 }
 
-func UseStack() {
-	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
-}
-
 func UseConsoleOutput() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-}
-
-func UseTimeFormatUnix() {
-	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
 }

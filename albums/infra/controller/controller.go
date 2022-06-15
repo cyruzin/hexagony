@@ -3,6 +3,7 @@ package controller
 import (
 	"encoding/json"
 	"hexagony/albums/domain"
+	"hexagony/lib/clog"
 	"hexagony/lib/rest"
 	"hexagony/lib/validation"
 	"net/http"
@@ -40,6 +41,7 @@ func NewAlbumHandler(c *chi.Mux, as domain.AlbumUseCase) {
 func (a *AlbumHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 	albums, err := a.albumUseCase.FindAll(r.Context())
 	if err != nil {
+		clog.Error(err, domain.ErrFindAll.Error())
 		rest.DecodeError(w, r, domain.ErrFindAll, http.StatusUnprocessableEntity)
 		return
 	}
@@ -60,12 +62,14 @@ func (a *AlbumHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 func (a *AlbumHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
+		clog.Error(err, domain.ErrUUIDParse.Error())
 		rest.DecodeError(w, r, domain.ErrUUIDParse, http.StatusUnprocessableEntity)
 		return
 	}
 
 	album, err := a.albumUseCase.FindByID(r.Context(), uuid)
 	if err != nil {
+		clog.Error(err, domain.ErrFindByID.Error())
 		rest.DecodeError(w, r, domain.ErrFindByID, http.StatusUnprocessableEntity)
 		return
 	}
@@ -88,6 +92,7 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&album)
 	if err != nil {
+		clog.Error(err, domain.ErrAdd.Error())
 		rest.DecodeError(w, r, domain.ErrAdd, http.StatusUnprocessableEntity)
 		return
 	}
@@ -105,6 +110,7 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 
 	err = a.albumUseCase.Add(r.Context(), &album)
 	if err != nil {
+		clog.Error(err, domain.ErrAdd.Error())
 		rest.DecodeError(w, r, domain.ErrAdd, http.StatusUnprocessableEntity)
 		return
 	}
@@ -126,6 +132,7 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
+		clog.Error(err, domain.ErrUUIDParse.Error())
 		rest.DecodeError(w, r, domain.ErrUUIDParse, http.StatusUnprocessableEntity)
 		return
 	}
@@ -134,6 +141,7 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewDecoder(r.Body).Decode(&album)
 	if err != nil {
+		clog.Error(err, domain.ErrUpdate.Error())
 		rest.DecodeError(w, r, domain.ErrUpdate, http.StatusUnprocessableEntity)
 		return
 	}
@@ -141,6 +149,7 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 	validation := validation.New()
 
 	if err := validation.Bind(r.Context(), album); err != nil {
+		clog.Error(err, domain.ErrUpdate.Error())
 		validation.DecodeError(w, err)
 		return
 	}
@@ -149,6 +158,7 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	err = a.albumUseCase.Update(r.Context(), uuid, &album)
 	if err != nil {
+		clog.Error(err, domain.ErrUpdate.Error())
 		rest.DecodeError(w, r, domain.ErrUpdate, http.StatusUnprocessableEntity)
 		return
 	}
@@ -169,12 +179,14 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 func (a *AlbumHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
+		clog.Error(err, domain.ErrDelete.Error())
 		rest.DecodeError(w, r, domain.ErrDelete, http.StatusUnprocessableEntity)
 		return
 	}
 
 	err = a.albumUseCase.Delete(r.Context(), uuid)
 	if err != nil {
+		clog.Error(err, domain.ErrDelete.Error())
 		rest.DecodeError(w, r, domain.ErrDelete, http.StatusUnprocessableEntity)
 		return
 	}
