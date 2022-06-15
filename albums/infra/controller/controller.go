@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-playground/validator/v10"
 	"github.com/google/uuid"
 )
 
@@ -36,7 +35,7 @@ func NewAlbumHandler(c *chi.Mux, as domain.AlbumUseCase) {
 // @Accept       json
 // @Produce      json
 // @Success      200  {object}  []domain.Album
-// @Failure      422   {object}  rest.APIMessage
+// @Failure      422   {object}  rest.Message
 // @Router       /album [get]
 func (a *AlbumHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 	albums, err := a.albumUseCase.FindAll(r.Context())
@@ -45,7 +44,7 @@ func (a *AlbumHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rest.EncodeJSON(w, http.StatusOK, &albums)
+	rest.JSON(w, http.StatusOK, &albums)
 }
 
 // FindByID godoc
@@ -56,7 +55,7 @@ func (a *AlbumHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        uuid  path      string  true  "album uuid"
 // @Success      200   {object}  domain.Album
-// @Failure      422      {object}  rest.APIMessage
+// @Failure      422      {object}  rest.Message
 // @Router       /album/{uuid} [get]
 func (a *AlbumHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
@@ -71,7 +70,7 @@ func (a *AlbumHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rest.EncodeJSON(w, http.StatusOK, album)
+	rest.JSON(w, http.StatusOK, album)
 }
 
 // Add godoc
@@ -81,8 +80,8 @@ func (a *AlbumHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 // @Accept       json
 // @Produce      json
 // @Param        payload  body      domain.Album  true  "add a new album"
-// @Success      201      {object}  rest.APIMessage
-// @Failure      422      {object}  rest.APIMessage
+// @Success      201      {object}  rest.Message
+// @Failure      422      {object}  rest.Message
 // @Router       /album [post]
 func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 	var album domain.Album
@@ -93,8 +92,10 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := validator.New().StructCtx(r.Context(), album); err != nil {
-		validation.Message(w, err)
+	validation := validation.New()
+
+	if err := validation.Bind(r.Context(), album); err != nil {
+		validation.DecodeError(w, err)
 		return
 	}
 
@@ -108,7 +109,7 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rest.EncodeJSON(w, http.StatusCreated, &rest.APIMessage{Message: "Created"})
+	rest.JSON(w, http.StatusCreated, &rest.Message{Message: "Created"})
 }
 
 // Update godoc
@@ -119,8 +120,8 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        uuid     path      string        true  "album uuid"
 // @Param        payload  body      domain.Album  true  "update an album by uuid"
-// @Success      200      {object}  rest.APIMessage
-// @Failure      422   {object}  rest.APIMessage
+// @Success      200      {object}  rest.Message
+// @Failure      422   {object}  rest.Message
 // @Router       /album/{uuid} [put]
 func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
@@ -137,8 +138,10 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := validator.New().StructCtx(r.Context(), album); err != nil {
-		validation.Message(w, err)
+	validation := validation.New()
+
+	if err := validation.Bind(r.Context(), album); err != nil {
+		validation.DecodeError(w, err)
 		return
 	}
 
@@ -150,7 +153,7 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rest.EncodeJSON(w, http.StatusOK, &rest.APIMessage{Message: "Updated"})
+	rest.JSON(w, http.StatusOK, &rest.Message{Message: "Updated"})
 }
 
 // Update godoc
@@ -160,8 +163,8 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 // @Accept       json
 // @Produce      json
 // @Param        uuid  path      string  true  "album uuid"
-// @Success      200   {object}  rest.APIMessage
-// @Failure      422  {object}  rest.APIMessage
+// @Success      200   {object}  rest.Message
+// @Failure      422  {object}  rest.Message
 // @Router       /album/{uuid} [delete]
 func (a *AlbumHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
@@ -176,5 +179,5 @@ func (a *AlbumHandler) Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rest.EncodeJSON(w, http.StatusOK, &rest.APIMessage{Message: "Deleted"})
+	rest.JSON(w, http.StatusOK, &rest.Message{Message: "Deleted"})
 }

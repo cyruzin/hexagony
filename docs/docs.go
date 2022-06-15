@@ -50,7 +50,7 @@ const docTemplate = `{
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     }
                 }
@@ -82,13 +82,13 @@ const docTemplate = `{
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     }
                 }
@@ -126,7 +126,7 @@ const docTemplate = `{
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     }
                 }
@@ -165,13 +165,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     }
                 }
@@ -201,13 +201,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     }
                 }
@@ -239,7 +239,7 @@ const docTemplate = `{
                 }
             }
         },
-        "rest.APIMessage": {
+        "rest.Message": {
             "type": "object",
             "properties": {
                 "message": {
@@ -257,7 +257,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8000",
-	BasePath:         "/",
+	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "Hexagony API",
 	Description:      "Clean architecture example in Golang.",

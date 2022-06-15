@@ -7,6 +7,7 @@ import (
 
 	albumController "hexagony/albums/infra/controller"
 	albumRepository "hexagony/albums/repository/mysql"
+	"hexagony/lib/clog"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,9 +17,6 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/go-chi/render"
 	"github.com/jmoiron/sqlx"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
-	"github.com/rs/zerolog/pkgerrors"
 	httpSwagger "github.com/swaggo/http-swagger"
 
 	_ "hexagony/docs"
@@ -37,20 +35,17 @@ import (
 // @license.name  MIT
 // @license.url   https://github.com/cyruzin/hexagony/blob/master/LICENSE
 
-// @host      localhost:8000
-// @BasePath  /
+// @host  localhost:8000
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	zerolog.ErrorStackMarshaler = pkgerrors.MarshalStack
-
 	if os.Getenv("ENV_MODE") == "development" {
-		log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
-		log.Debug().Msg("running in development mode")
+		clog.UseConsoleOutput()
+		clog.Debug("running in development mode")
 	} else {
-		log.Info().Msg("running in production mode")
-		zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
+		clog.Info("running in production mode")
+		clog.UseTimeFormatUnix()
 	}
 
 	databaseURL := fmt.Sprintf(
@@ -61,16 +56,12 @@ func main() {
 
 	conn, err := sqlx.ConnectContext(ctx, "mysql", databaseURL)
 	if err != nil {
-		log.Fatal().Err(err).Msg("mysql failed to start")
+		clog.Fatal("mysql failed to start")
 	}
 	defer conn.Close()
 
 	if err := conn.PingContext(ctx); err != nil {
-		log.Fatal().
-			Err(err).
-			Stack().
-			Str("database", conn.DriverName()).
-			Msg("could not ping the database")
+		clog.Fatal("could not ping the database")
 	}
 
 	router := chi.NewRouter()
@@ -97,7 +88,6 @@ func main() {
 	router.Use(
 		cors.Handler,
 		render.SetContentType(render.ContentTypeJSON),
-		middleware.RequestID,
 		middleware.RealIP,
 		middleware.Logger,
 		middleware.Recoverer,
@@ -105,7 +95,7 @@ func main() {
 	)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		if _, err := w.Write([]byte("Hexagony v1.0")); err != nil {
+		if _, err := w.Write([]byte("Welcome to Hexagony API")); err != nil {
 			return
 		}
 	})
@@ -131,18 +121,18 @@ func main() {
 		signal.Notify(gracefulStop, os.Interrupt)
 		<-gracefulStop
 
-		log.Info().Msg("shutting down the server...")
+		clog.Info("shutting down the server...")
 		if err := srv.Shutdown(ctx); err != nil {
-			log.Error().Err(err).Msg("server failed to shutdown")
+			clog.Error(err, "server failed to shutdown")
 		}
 		close(idleConnsClosed)
 	}()
 
-	log.Info().Msgf("listening on port: %s", os.Getenv("PORT"))
-	log.Info().Msg("you're good to go! :)")
+	clog.Info("listening on port: " + os.Getenv("PORT"))
+	clog.Info("you're good to go! :)")
 
 	if err := srv.ListenAndServe(); err != http.ErrServerClosed {
-		log.Error().Err(err).Msg("server failed to start")
+		clog.Error(err, "server failed to start")
 	}
 
 	<-idleConnsClosed

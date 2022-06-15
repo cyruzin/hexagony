@@ -1,4 +1,3 @@
-basePath: /
 definitions:
   domain.Album:
     properties:
@@ -16,7 +15,7 @@ definitions:
     - length
     - name
     type: object
-  rest.APIMessage:
+  rest.Message:
     properties:
       message:
         type: string
@@ -53,7 +52,7 @@ paths:
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/rest.APIMessage'
+            $ref: '#/definitions/rest.Message'
       summary: List of albums
       tags:
       - album
@@ -74,11 +73,11 @@ paths:
         "201":
           description: Created
           schema:
-            $ref: '#/definitions/rest.APIMessage'
+            $ref: '#/definitions/rest.Message'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/rest.APIMessage'
+            $ref: '#/definitions/rest.Message'
       summary: Add an album
       tags:
       - album
@@ -99,11 +98,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/rest.APIMessage'
+            $ref: '#/definitions/rest.Message'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/rest.APIMessage'
+            $ref: '#/definitions/rest.Message'
       summary: Delete an album
       tags:
       - album
@@ -127,7 +126,7 @@ paths:
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/rest.APIMessage'
+            $ref: '#/definitions/rest.Message'
       summary: List an album
       tags:
       - album
@@ -153,11 +152,11 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/rest.APIMessage'
+            $ref: '#/definitions/rest.Message'
         "422":
           description: Unprocessable Entity
           schema:
-            $ref: '#/definitions/rest.APIMessage'
+            $ref: '#/definitions/rest.Message'
       summary: Update an album
       tags:
       - album

@@ -15,7 +15,6 @@
         "version": "1.0"
     },
     "host": "localhost:8000",
-    "basePath": "/",
     "paths": {
         "/album": {
             "get": {
@@ -43,7 +42,7 @@
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     }
                 }
@@ -75,13 +74,13 @@
                     "201": {
                         "description": "Created",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     }
                 }
@@ -119,7 +118,7 @@
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     }
                 }
@@ -158,13 +157,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     }
                 }
@@ -194,13 +193,13 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
-                            "$ref": "#/definitions/rest.APIMessage"
+                            "$ref": "#/definitions/rest.Message"
                         }
                     }
                 }
@@ -232,7 +231,7 @@
                 }
             }
         },
-        "rest.APIMessage": {
+        "rest.Message": {
             "type": "object",
             "properties": {
                 "message": {
