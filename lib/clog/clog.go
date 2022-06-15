@@ -17,7 +17,7 @@ type CLog interface {
 }
 
 func Error(err error, msg string) {
-	log.Error().Stack().Err(err).Msg(msg)
+	log.Error().Err(err).Msg(msg)
 }
 
 func Debug(msg string) {
@@ -25,7 +25,7 @@ func Debug(msg string) {
 }
 
 func Fatal(msg string) {
-	log.Fatal().Stack().Msg(msg)
+	log.Fatal().Msg(msg)
 }
 
 func Info(msg string) {
@@ -37,7 +37,7 @@ func Warn(msg string) {
 }
 
 func Panic(msg string) {
-	log.Panic().Stack().Msg(msg)
+	log.Panic().Msg(msg)
 }
 
 func UseConsoleOutput() {
