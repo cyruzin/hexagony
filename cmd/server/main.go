@@ -12,6 +12,8 @@ import (
 	"os"
 	"os/signal"
 
+	cmiddleware "hexagony/shared/infra/middleware"
+
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
@@ -86,9 +88,8 @@ func main() {
 
 	router.Use(
 		middleware.Timeout(time.Second*60),
-		middleware.RealIP,
 		middleware.Recoverer,
-		middleware.Logger,
+		cmiddleware.LoggerMiddleware,
 		render.SetContentType(render.ContentTypeJSON),
 		cors.Handler,
 	)
