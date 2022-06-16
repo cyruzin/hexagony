@@ -14,6 +14,7 @@ type CLog interface {
 	Info(msg string)
 	Warn(msg string)
 	Panic(msg string)
+	Custom(msg map[string]string)
 }
 
 func Error(err error, msg string) {
@@ -38,6 +39,10 @@ func Warn(msg string) {
 
 func Panic(msg string) {
 	log.Panic().Msg(msg)
+}
+
+func Custom(msg map[string]interface{}) {
+	log.Info().Fields(msg).Msg("")
 }
 
 func UseConsoleOutput() {
