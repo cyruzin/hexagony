@@ -85,12 +85,12 @@ func main() {
 	})
 
 	router.Use(
-		cors.Handler,
-		render.SetContentType(render.ContentTypeJSON),
-		middleware.RealIP,
-		middleware.Logger,
-		middleware.Recoverer,
 		middleware.Timeout(time.Second*60),
+		middleware.RealIP,
+		middleware.Recoverer,
+		middleware.Logger,
+		render.SetContentType(render.ContentTypeJSON),
+		cors.Handler,
 	)
 
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
