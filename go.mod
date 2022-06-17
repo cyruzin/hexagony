@@ -9,12 +9,14 @@ require (
 	github.com/go-chi/render v1.0.1
 	github.com/go-playground/validator/v10 v10.11.0
 	github.com/go-sql-driver/mysql v1.6.0
+	github.com/golang-jwt/jwt/v4 v4.4.1
 	github.com/google/uuid v1.3.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/rs/zerolog v1.27.0
 	github.com/stretchr/testify v1.7.2
 	github.com/swaggo/http-swagger v1.2.8
 	github.com/swaggo/swag v1.8.1
+	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
 )
 
 require (
@@ -34,7 +36,6 @@ require (
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.4.0 // indirect
 	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2 // indirect
-	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3 // indirect
 	golang.org/x/net v0.0.0-20220425223048-2871e0cb64e4 // indirect
 	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
 	golang.org/x/text v0.3.7 // indirect

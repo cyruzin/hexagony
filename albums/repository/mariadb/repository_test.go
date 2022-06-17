@@ -1,4 +1,4 @@
-package mysql
+package mariadb
 
 import (
 	"context"
@@ -65,7 +65,7 @@ func TestFindAll(t *testing.T) {
 
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
-	albumRepo := NewMysqlRepository(dbx)
+	albumRepo := NewMariaDBRepository(dbx)
 	albumList, err := albumRepo.FindAll(context.TODO())
 
 	assert.NoError(t, err)
@@ -95,7 +95,7 @@ func TestFindAllFail(t *testing.T) {
 	query := "SELECT \\* FROM albums"
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
-	albumRepo := NewMysqlRepository(dbx)
+	albumRepo := NewMariaDBRepository(dbx)
 	_, err = albumRepo.FindAll(context.TODO())
 
 	assert.NotNil(t, err)
@@ -125,7 +125,7 @@ func TestFindByID(t *testing.T) {
 	query := "SELECT \\* FROM albums WHERE uuid=\\?"
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
-	albumRepo := NewMysqlRepository(dbx)
+	albumRepo := NewMariaDBRepository(dbx)
 	currentAlbum, err := albumRepo.FindByID(context.TODO(), newUUID)
 
 	assert.NoError(t, err)
@@ -158,7 +158,7 @@ func TestGetByIDFail(t *testing.T) {
 	query := "SELECT \\* FROM albums WHERE uuid=\\?"
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
-	albumRepo := NewMysqlRepository(dbx)
+	albumRepo := NewMariaDBRepository(dbx)
 	_, err = albumRepo.FindByID(ctx, newUUID)
 
 	assert.NotNil(t, err)
@@ -206,7 +206,7 @@ func TestAdd(t *testing.T) {
 		WithArgs(newUUID, album.Name, album.Length, album.CreatedAt, album.UpdatedAt).
 		WillReturnResult(sqlmock.NewResult(1, 1)) // Using UUID
 
-	albumRepo := NewMysqlRepository(dbx)
+	albumRepo := NewMariaDBRepository(dbx)
 	err = albumRepo.Add(context.TODO(), album)
 
 	assert.NoError(t, err)
@@ -239,7 +239,7 @@ func TestStoreFail(t *testing.T) {
 		WithArgs("", "", "", "", "").
 		WillReturnResult(sqlmock.NewResult(1, 1)) // Using UUID
 
-	albumRepo := NewMysqlRepository(dbx)
+	albumRepo := NewMariaDBRepository(dbx)
 	err = albumRepo.Add(context.TODO(), album)
 
 	assert.NotNil(t, err)
@@ -277,7 +277,7 @@ func TestUpdate(t *testing.T) {
 		WithArgs(album.Name, album.Length, album.UpdatedAt, album.UUID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	albumRepo := NewMysqlRepository(dbx)
+	albumRepo := NewMariaDBRepository(dbx)
 	err = albumRepo.Update(context.TODO(), newUUID, album)
 
 	assert.NoError(t, err)
@@ -309,7 +309,7 @@ func TestUpdateFail(t *testing.T) {
 		WithArgs("", "", "", "", "", "").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	albumRepo := NewMysqlRepository(dbx)
+	albumRepo := NewMariaDBRepository(dbx)
 	err = albumRepo.Update(context.TODO(), newUUID, album)
 
 	assert.NotNil(t, err)
@@ -350,7 +350,7 @@ func TestUpdateRowsAffected(t *testing.T) {
 		album.UUID,
 	).WillReturnResult(sqlmock.NewResult(1, 0))
 
-	albumRepo := NewMysqlRepository(dbx)
+	albumRepo := NewMariaDBRepository(dbx)
 	err = albumRepo.Update(context.TODO(), newUUID, album)
 
 	assert.NotNil(t, err)
@@ -391,7 +391,7 @@ func TestUpdateRowsAffectedFail(t *testing.T) {
 		album.UUID,
 	).WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
 
-	albumRepo := NewMysqlRepository(dbx)
+	albumRepo := NewMariaDBRepository(dbx)
 	err = albumRepo.Update(context.TODO(), newUUID, album)
 
 	assert.NotNil(t, err)
@@ -414,7 +414,7 @@ func TestDelete(t *testing.T) {
 		WithArgs(newUUID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	albumRepo := NewMysqlRepository(dbx)
+	albumRepo := NewMariaDBRepository(dbx)
 	err = albumRepo.Delete(context.TODO(), newUUID)
 
 	assert.NoError(t, err)
@@ -437,7 +437,7 @@ func TestDeleteFailure(t *testing.T) {
 		WithArgs(0).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
-	albumRepo := NewMysqlRepository(dbx)
+	albumRepo := NewMariaDBRepository(dbx)
 	err = albumRepo.Delete(context.TODO(), newUUID)
 
 	assert.NotNil(t, err)
@@ -460,7 +460,7 @@ func TestDeleteRowsAffected(t *testing.T) {
 		WithArgs(newUUID).
 		WillReturnResult(sqlmock.NewResult(1, 0))
 
-	albumRepo := NewMysqlRepository(dbx)
+	albumRepo := NewMariaDBRepository(dbx)
 	err = albumRepo.Delete(context.TODO(), newUUID)
 
 	assert.NotNil(t, err)
@@ -483,7 +483,7 @@ func TestDeleteRowsAffectedFail(t *testing.T) {
 		WithArgs(newUUID).
 		WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
 
-	albumRepo := NewMysqlRepository(dbx)
+	albumRepo := NewMariaDBRepository(dbx)
 	err = albumRepo.Delete(context.TODO(), newUUID)
 
 	assert.NotNil(t, err)

@@ -15,6 +15,47 @@ definitions:
     - length
     - name
     type: object
+  domain.User:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      token:
+        type: string
+      updated_at:
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  domain.UserUpdate:
+    properties:
+      created_at:
+        type: string
+      email:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 8
+        type: string
+      updated_at:
+        type: string
+    required:
+    - email
+    - name
+    type: object
   rest.Message:
     properties:
       message:
@@ -40,6 +81,13 @@ paths:
       consumes:
       - application/json
       description: lists all albums
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -61,6 +109,12 @@ paths:
       - application/json
       description: add a new album
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: add a new album
         in: body
         name: payload
@@ -87,6 +141,12 @@ paths:
       - application/json
       description: delete an album by uuid
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: album uuid
         in: path
         name: uuid
@@ -111,6 +171,12 @@ paths:
       - application/json
       description: lists an album by uuid
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: album uuid
         in: path
         name: uuid
@@ -135,6 +201,12 @@ paths:
       - application/json
       description: update an album by uuid
       parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
       - description: album uuid
         in: path
         name: uuid
@@ -160,4 +232,186 @@ paths:
       summary: Update an album
       tags:
       - album
+  /auth:
+    post:
+      consumes:
+      - application/json
+      description: authenticate a user and returns a JWT token
+      parameters:
+      - description: authenticates the user
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/domain.User'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.Message'
+      summary: Authenticate a user
+      tags:
+      - auth
+  /user:
+    get:
+      consumes:
+      - application/json
+      description: lists all users
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/domain.User'
+            type: array
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.Message'
+      summary: List of users
+      tags:
+      - user
+    post:
+      consumes:
+      - application/json
+      description: add a new user
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: add a new user
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/domain.User'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/rest.Message'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.Message'
+      summary: Add an user
+      tags:
+      - user
+  /user/{uuid}:
+    delete:
+      consumes:
+      - application/json
+      description: delete an user by uuid
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: user uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.Message'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.Message'
+      summary: Delete an user
+      tags:
+      - user
+    get:
+      consumes:
+      - application/json
+      description: lists an user by uuid
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: user uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/domain.User'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.Message'
+      summary: List an user
+      tags:
+      - user
+    put:
+      consumes:
+      - application/json
+      description: update an user by uuid
+      parameters:
+      - default: Bearer <Add access token here>
+        description: Insert your access token
+        in: header
+        name: Authorization
+        required: true
+        type: string
+      - description: user uuid
+        in: path
+        name: uuid
+        required: true
+        type: string
+      - description: update an user by uuid
+        in: body
+        name: payload
+        required: true
+        schema:
+          $ref: '#/definitions/domain.UserUpdate'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/rest.Message'
+        "422":
+          description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.Message'
+      summary: Update an user
+      tags:
+      - user
 swagger: "2.0"

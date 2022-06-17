@@ -1,48 +1,48 @@
-package mysql
+package mariadb
 
 import (
 	"context"
 	"database/sql"
-	"hexagony/albums/domain"
+	"hexagony/users/domain"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
 )
 
-type mysqlRepository struct {
+type mariadbRepository struct {
 	conn *sqlx.DB
 }
 
-func NewMysqlRepository(conn *sqlx.DB) domain.AlbumRepository {
-	return &mysqlRepository{conn}
+func NewMariaDBRepository(conn *sqlx.DB) domain.UserRepository {
+	return &mariadbRepository{conn}
 }
 
-func (r *mysqlRepository) FindAll(
+func (r *mariadbRepository) FindAll(
 	ctx context.Context,
-) ([]*domain.Album, error) {
-	var album []*domain.Album
+) ([]*domain.User, error) {
+	var users []*domain.User
 
 	err := r.conn.SelectContext(
 		ctx,
-		&album,
+		&users,
 		sqlFindAll,
 	)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, err
 	}
 
-	return album, nil
+	return users, nil
 }
 
-func (r *mysqlRepository) FindByID(
+func (r *mariadbRepository) FindByID(
 	ctx context.Context,
 	uuid uuid.UUID,
-) (*domain.Album, error) {
-	var album domain.Album
+) (*domain.User, error) {
+	var user domain.User
 
 	err := r.conn.GetContext(
 		ctx,
-		&album,
+		&user,
 		sqlFindByID,
 		uuid,
 	)
@@ -50,25 +50,22 @@ func (r *mysqlRepository) FindByID(
 		return nil, err
 	}
 
-	if album.Name == "" {
-		return nil, domain.ErrResourceNotFound
-	}
-
-	return &album, nil
+	return &user, nil
 }
 
-func (r *mysqlRepository) Add(
+func (r *mariadbRepository) Add(
 	ctx context.Context,
-	album *domain.Album,
+	user *domain.User,
 ) error {
 	if _, err := r.conn.ExecContext(
 		ctx,
 		sqlAdd,
-		album.UUID,
-		album.Name,
-		album.Length,
-		album.CreatedAt,
-		album.CreatedAt,
+		user.UUID,
+		user.Name,
+		user.Email,
+		user.Password,
+		user.CreatedAt,
+		user.CreatedAt,
 	); err != nil {
 		return err
 	}
@@ -76,17 +73,18 @@ func (r *mysqlRepository) Add(
 	return nil
 }
 
-func (r *mysqlRepository) Update(
+func (r *mariadbRepository) Update(
 	ctx context.Context,
 	uuid uuid.UUID,
-	album *domain.Album,
+	user *domain.UserUpdate,
 ) error {
 	result, err := r.conn.ExecContext(
 		ctx,
 		sqlUpdate,
-		album.Name,
-		album.Length,
-		album.UpdatedAt,
+		user.Name,
+		user.Email,
+		user.Password,
+		user.UpdatedAt,
 		uuid,
 	)
 	if err != nil {
@@ -105,7 +103,7 @@ func (r *mysqlRepository) Update(
 	return nil
 }
 
-func (r *mysqlRepository) Delete(
+func (r *mariadbRepository) Delete(
 	ctx context.Context,
 	uuid uuid.UUID,
 ) error {

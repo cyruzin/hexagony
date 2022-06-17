@@ -23,7 +23,7 @@ type AlbumRepository interface {
 	Delete(context.Context, uuid.UUID) error
 }
 
-type AlbumUseCase interface {
+type UserUseCase interface {
 	FindAll(ctx context.Context) ([]*Album, error)
 	FindByID(ctx context.Context, uuid uuid.UUID) (*Album, error)
 	Add(ctx context.Context, album *Album) error

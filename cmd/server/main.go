@@ -5,9 +5,16 @@ import (
 	"fmt"
 	"time"
 
-	albumController "hexagony/albums/infra/controller"
-	albumRepository "hexagony/albums/repository/mysql"
+	albumsController "hexagony/albums/infra/controller"
+	albumsRepository "hexagony/albums/repository/mariadb"
 	"hexagony/lib/clog"
+	usersController "hexagony/users/infra/controller"
+	usersRepository "hexagony/users/repository/mariadb"
+
+	authController "hexagony/auth/infra/controller"
+	authRepository "hexagony/auth/repository/mariadb"
+	authUseCase "hexagony/auth/usecase"
+
 	"net/http"
 	"os"
 	"os/signal"
@@ -55,9 +62,9 @@ func main() {
 		os.Getenv("DB_PORT"), os.Getenv("DB_NAME"),
 	)
 
-	conn, err := sqlx.ConnectContext(ctx, "mysql", databaseURL)
+	conn, err := sqlx.ConnectContext(ctx, "mysql", databaseURL) // mariadb uses the mysql driver
 	if err != nil {
-		clog.Fatal("mysql failed to start")
+		clog.Fatal("mariadb failed to start")
 	}
 	defer conn.Close()
 
@@ -102,8 +109,15 @@ func main() {
 
 	router.Get("/docs/*", httpSwagger.WrapHandler)
 
-	albumRepository := albumRepository.NewMysqlRepository(conn)
-	albumController.NewAlbumHandler(router, albumRepository)
+	usersRepository := usersRepository.NewMariaDBRepository(conn)
+	usersController.NewUserHandler(router, usersRepository)
+
+	albumsRepository := albumsRepository.NewMariaDBRepository(conn)
+	albumsController.NewAlbumHandler(router, albumsRepository)
+
+	authRepository := authRepository.NewAuthRepository(conn)
+	authUseCase := authUseCase.NewAuthUsecase(authRepository)
+	authController.NewAuthHandler(router, authUseCase)
 
 	srv := &http.Server{
 		Addr:              ":" + os.Getenv("PORT"),

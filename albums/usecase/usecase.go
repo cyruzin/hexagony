@@ -11,8 +11,8 @@ type albumUseCase struct {
 	albumRepository domain.AlbumRepository
 }
 
-func NewAlbumUseCase(uc domain.AlbumRepository) domain.AlbumUseCase {
-	return &albumUseCase{albumRepository: uc}
+func NewAlbumUseCase(ar domain.AlbumRepository) domain.UserUseCase {
+	return &albumUseCase{albumRepository: ar}
 }
 
 func (s *albumUseCase) FindAll(ctx context.Context) ([]*domain.Album, error) {

@@ -1,4 +1,4 @@
-package mysql
+package mariadb
 
 const (
 	sqlFindAll = "SELECT * FROM albums"
