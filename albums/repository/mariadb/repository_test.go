@@ -134,7 +134,6 @@ func TestFindByID(t *testing.T) {
 }
 
 func TestGetByIDFail(t *testing.T) {
-	now := time.Now()
 	newUUID := uuid.New()
 	ctx := context.TODO()
 	db, mock, err := sqlmock.New()
@@ -159,20 +158,6 @@ func TestGetByIDFail(t *testing.T) {
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
 	albumRepo := NewMariaDBRepository(dbx)
-	_, err = albumRepo.FindByID(ctx, newUUID)
-
-	assert.NotNil(t, err)
-
-	rows2 := sqlmock.NewRows([]string{
-		"uuid",
-		"name",
-		"length",
-		"created_at",
-		"updated_at",
-	}).
-		AddRow(newUUID, "", 75, now, now)
-
-	mock.ExpectQuery(query).WillReturnRows(rows2)
 	_, err = albumRepo.FindByID(ctx, newUUID)
 
 	assert.NotNil(t, err)
