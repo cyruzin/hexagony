@@ -5,21 +5,21 @@ import (
 	"fmt"
 	"time"
 
-	albumsController "hexagony/albums/infra/controller"
-	albumsRepository "hexagony/albums/repository/mariadb"
+	albumsController "hexagony/app/albums/http/controller"
+	albumsRepository "hexagony/app/albums/repository/mariadb"
+	usersController "hexagony/app/users/http/controller"
+	usersRepository "hexagony/app/users/repository/mariadb"
 	"hexagony/lib/clog"
-	usersController "hexagony/users/infra/controller"
-	usersRepository "hexagony/users/repository/mariadb"
 
-	authController "hexagony/auth/infra/controller"
-	authRepository "hexagony/auth/repository/mariadb"
-	authUseCase "hexagony/auth/usecase"
+	authController "hexagony/app/auth/http/controller"
+	authRepository "hexagony/app/auth/repository/mariadb"
+	authUseCase "hexagony/app/auth/usecase"
 
 	"net/http"
 	"os"
 	"os/signal"
 
-	cmiddleware "hexagony/shared/infra/middleware"
+	cmiddleware "hexagony/app/shared/http/middleware"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
