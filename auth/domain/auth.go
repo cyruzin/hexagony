@@ -21,12 +21,12 @@ type AuthToken struct {
 	Token string `json:"token,omitempty"`
 }
 
-// AuthUsecase represent the auth's usecases.
-type AuthUsecase interface {
-	Authenticate(ctx context.Context, email, password string) (*AuthToken, error)
-}
-
 // AuthRepository represent the auth's repository contract.
 type AuthRepository interface {
 	Authenticate(ctx context.Context, email string, password string) (*domain.User, error)
+}
+
+// AuthUsecase represent the auth's usecases.
+type AuthUseCase interface {
+	Authenticate(ctx context.Context, email, password string) (*AuthToken, error)
 }

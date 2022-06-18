@@ -17,14 +17,14 @@ type authUseCase struct {
 	authRepo authDomain.AuthRepository
 }
 
-func NewAuthUsecase(auth authDomain.AuthRepository) authDomain.AuthUsecase {
+func NewAuthUsecase(auth authDomain.AuthRepository) authDomain.AuthUseCase {
 	return &authUseCase{
 		authRepo: auth,
 	}
 }
 
 func (a *authUseCase) Authenticate(ctx context.Context, email, password string) (*authDomain.AuthToken, error) {
-	user, err := a.authRepo.Authenticate(ctx, email, "")
+	user, err := a.authRepo.Authenticate(ctx, email, password)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,13 @@ func (a *authUseCase) Authenticate(ctx context.Context, email, password string) 
 		Email: user.Email,
 	}
 
-	duration, err := time.ParseDuration(os.Getenv("JWT_DURATION"))
+	jwtDuration := os.Getenv("JWT_DURATION")
+
+	if jwtDuration == "" {
+		jwtDuration = "60m"
+	}
+
+	duration, err := time.ParseDuration(jwtDuration)
 	if err != nil {
 		return nil, err
 	}

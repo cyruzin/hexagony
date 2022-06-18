@@ -11,4 +11,5 @@ var (
 	ErrUUIDParse = errors.New("couldn't parse the UUID")
 
 	ErrResourceNotFound = errors.New("the resource you requested could not be found")
+	ErrHashPassword     = errors.New("failed to hash the password")
 )

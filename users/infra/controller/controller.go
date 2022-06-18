@@ -119,8 +119,8 @@ func (u *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
 
 	hashPass, err := bcrypt.HashPassword(user.Password, 10)
 	if err != nil {
-		clog.Error(err, domain.ErrAdd.Error())
-		rest.DecodeError(w, r, domain.ErrAdd, http.StatusUnprocessableEntity)
+		clog.Error(err, domain.ErrHashPassword.Error())
+		rest.DecodeError(w, r, domain.ErrHashPassword, http.StatusUnprocessableEntity)
 		return
 	}
 

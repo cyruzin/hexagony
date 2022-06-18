@@ -12,10 +12,10 @@ import (
 )
 
 type AuthHandler struct {
-	authUseCase domain.AuthUsecase
+	authUseCase domain.AuthUseCase
 }
 
-func NewAuthHandler(c *chi.Mux, auc domain.AuthUsecase) {
+func NewAuthHandler(c *chi.Mux, auc domain.AuthUseCase) {
 	handler := AuthHandler{authUseCase: auc}
 
 	c.Post("/auth", handler.Authenticate)
