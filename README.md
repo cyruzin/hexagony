@@ -34,7 +34,8 @@ $ swag init -g ./cmd/server/main.go
 
 ## Schema
 
-Download the schema inside the folder **api/insomnia-schema** and import in your Insomnia application or another request tool.
+Download the schema inside **docs** folder and import in your Insomnia application or another request tool.
+You need to specify Authorization header along with the Bearer token.
 
 ## Contributing
 
