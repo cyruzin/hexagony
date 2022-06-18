@@ -91,3 +91,70 @@ func TestAuthenticateFail(t *testing.T) {
 
 	mockAuthUseCase.AssertExpectations(t)
 }
+
+func TestAuthenticateFailDecode(t *testing.T) {
+	mockAuthUseCase := new(mocks.AuthUseCase)
+
+	mockAuthUseCase.
+		On("Authenticate",
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+		)
+
+	handler := AuthHandler{
+		authUseCase: mockAuthUseCase,
+	}
+
+	router := chi.NewRouter()
+
+	credentials := []byte(`{"foo:" "bar"}`)
+
+	req, err := http.NewRequest(http.MethodPost, "/auth", bytes.NewBuffer(credentials))
+
+	assert.NoError(t, err)
+
+	rec := httptest.NewRecorder()
+
+	router.HandleFunc("/auth", handler.Authenticate)
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+}
+
+func TestAuthenticateFailValidation(t *testing.T) {
+	mockAuthUseCase := new(mocks.AuthUseCase)
+
+	mockAuthUseCase.
+		On("Authenticate",
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+		)
+
+	handler := AuthHandler{
+		authUseCase: mockAuthUseCase,
+	}
+
+	router := chi.NewRouter()
+
+	credentials := []byte(`{"foo": "bar"}`)
+
+	req, err := http.NewRequest(http.MethodPost, "/auth", bytes.NewBuffer(credentials))
+
+	assert.NoError(t, err)
+
+	rec := httptest.NewRecorder()
+
+	router.HandleFunc("/auth", handler.Authenticate)
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusBadRequest, rec.Code)
+}
+
+func TestNewHandler(t *testing.T) {
+	c := chi.NewRouter()
+	mockAuthUseCase := new(mocks.AuthUseCase)
+
+	NewAuthHandler(c, mockAuthUseCase)
+}
