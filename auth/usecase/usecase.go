@@ -6,6 +6,7 @@ import (
 	authDomain "hexagony/auth/domain"
 	"hexagony/lib/crypto"
 	usersDomain "hexagony/users/domain"
+	"os"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -40,7 +41,12 @@ func (a *authUseCase) Authenticate(ctx context.Context, email, password string) 
 		Email: user.Email,
 	}
 
-	expiration := time.Duration(time.Minute * 60)
+	duration, err := time.ParseDuration(os.Getenv("JWT_DURATION"))
+	if err != nil {
+		return nil, err
+	}
+
+	expiration := time.Duration(time.Minute * duration)
 	tokenExpiration := time.Now().Add(expiration)
 
 	token, err := a.generateToken("user", customClaims, tokenExpiration)
@@ -62,7 +68,7 @@ func (a *authUseCase) generateToken(
 		return "", authDomain.ErrEmptyClaim
 	}
 
-	signingKey := []byte("secret")
+	signingKey := []byte(os.Getenv("JWT_SECRET"))
 
 	claims := struct {
 		jwt.RegisteredClaims

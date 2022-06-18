@@ -13,9 +13,7 @@ type mariadbRepository struct {
 	Conn *sqlx.DB
 }
 
-// NewAuthRepository will create an object that represent
-// the auth.Repository interface.
-func NewAuthRepository(Conn *sqlx.DB) authDomain.AuthRepository {
+func NewMariaDBRepository(Conn *sqlx.DB) authDomain.AuthRepository {
 	return &mariadbRepository{Conn}
 }
 

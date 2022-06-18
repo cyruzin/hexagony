@@ -11,7 +11,7 @@ type albumUseCase struct {
 	albumRepository domain.AlbumRepository
 }
 
-func NewAlbumUseCase(ar domain.AlbumRepository) domain.UserUseCase {
+func NewAlbumUseCase(ar domain.AlbumRepository) domain.AlbumUseCase {
 	return &albumUseCase{albumRepository: ar}
 }
 

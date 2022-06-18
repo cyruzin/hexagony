@@ -15,10 +15,10 @@ import (
 )
 
 type AlbumHandler struct {
-	albumUseCase domain.UserUseCase
+	albumUseCase domain.AlbumUseCase
 }
 
-func NewAlbumHandler(c *chi.Mux, as domain.UserUseCase) {
+func NewAlbumHandler(c *chi.Mux, as domain.AlbumUseCase) {
 	handler := AlbumHandler{albumUseCase: as}
 
 	c.Route("/album", func(r chi.Router) {

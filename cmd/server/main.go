@@ -115,7 +115,7 @@ func main() {
 	albumsRepository := albumsRepository.NewMariaDBRepository(conn)
 	albumsController.NewAlbumHandler(router, albumsRepository)
 
-	authRepository := authRepository.NewAuthRepository(conn)
+	authRepository := authRepository.NewMariaDBRepository(conn)
 	authUseCase := authUseCase.NewAuthUsecase(authRepository)
 	authController.NewAuthHandler(router, authUseCase)
 
