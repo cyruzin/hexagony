@@ -23,7 +23,7 @@ type AuthToken struct {
 
 // AuthRepository represent the auth's repository contract.
 type AuthRepository interface {
-	Authenticate(ctx context.Context, email string, password string) (*domain.User, error)
+	Authenticate(ctx context.Context, email string) (*domain.User, error)
 }
 
 // AuthUsecase represent the auth's usecases.

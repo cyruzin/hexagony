@@ -52,7 +52,7 @@ func TestAuthenticate(t *testing.T) {
 	mock.ExpectQuery(query).WillReturnRows(row)
 
 	authRepo := NewMariaDBRepository(dbx)
-	user, err := authRepo.Authenticate(context.TODO(), "xorycx@gmail.com", "12345678")
+	user, err := authRepo.Authenticate(context.TODO(), "xorycx@gmail.com")
 
 	assert.NoError(t, err)
 	assert.Equal(t, "Cyro Dubeux", user.Name)
@@ -82,7 +82,7 @@ func TestAuthenticateFail(t *testing.T) {
 	mock.ExpectQuery(query).WillReturnRows(row)
 
 	authRepo := NewMariaDBRepository(dbx)
-	user, err := authRepo.Authenticate(context.TODO(), "xorycx@gmail.com", "12345678")
+	user, err := authRepo.Authenticate(context.TODO(), "xorycx@gmail.com")
 
 	assert.Nil(t, user)
 	assert.Error(t, err)

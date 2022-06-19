@@ -24,7 +24,7 @@ func NewAuthUsecase(auth authDomain.AuthRepository) authDomain.AuthUseCase {
 }
 
 func (a *authUseCase) Authenticate(ctx context.Context, email, password string) (*authDomain.AuthToken, error) {
-	user, err := a.authRepo.Authenticate(ctx, email, password)
+	user, err := a.authRepo.Authenticate(ctx, email)
 	if err != nil {
 		return nil, err
 	}

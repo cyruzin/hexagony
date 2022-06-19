@@ -17,7 +17,7 @@ func NewMariaDBRepository(Conn *sqlx.DB) authDomain.AuthRepository {
 	return &mariadbRepository{Conn}
 }
 
-func (p *mariadbRepository) Authenticate(ctx context.Context, email string, password string) (*userDomain.User, error) {
+func (p *mariadbRepository) Authenticate(ctx context.Context, email string) (*userDomain.User, error) {
 	var user userDomain.User
 
 	err := p.Conn.GetContext(ctx, &user, sqlGetUser, email)
