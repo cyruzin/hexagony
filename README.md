@@ -37,6 +37,14 @@ $ swag init -g ./cmd/server/main.go
 Download the schema inside **docs** folder and import in your Insomnia application or another request tool.
 You need to specify Authorization header along with the Bearer token.
 
+## Generate Token
+
+Use the following credentials:
+
+**User**: john@doe.com
+
+**Pass**: 12345678
+
 ## Contributing
 
 Feel free to send pull requests, let's improve this project.

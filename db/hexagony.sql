@@ -18,6 +18,12 @@ LOCK TABLES `users` WRITE;
 
 UNLOCK TABLES;
 
+LOCK TABLES `users` WRITE;
+
+INSERT INTO `users` VALUES ('7d31461a-6ed5-425e-96fe-fa98e56d6828', 'John Doe', 'john@doe.com', '$2a$10$rPyJPskrTN545bXE0cqEU.T3uqluwiPFjGHMjE0/K.QuTe5XedjYi', '2022-06-19 16:53:09.000', '2022-06-19 16:53:09.000');
+
+UNLOCK TABLES;
+
 DROP TABLE IF EXISTS `albums`;
 
 CREATE TABLE `albums` (
