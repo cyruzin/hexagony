@@ -40,9 +40,6 @@ definitions:
         type: string
       name:
         type: string
-      password:
-        minLength: 8
-        type: string
     required:
     - email
     - name
