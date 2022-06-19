@@ -13,7 +13,6 @@ type Auth struct {
 	Name     string    `json:"name,omitempty"`
 	Email    string    `json:"email" validate:"required,email"`
 	Password string    `json:"password,omitempty" validate:"required,gte=8"`
-	Token    string    `json:"token,omitempty"`
 }
 
 // AuthToken represent the token payload.
