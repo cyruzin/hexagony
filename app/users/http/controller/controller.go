@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	cmiddleware "hexagony/app/shared/http/middleware"
 	"hexagony/app/users/domain"
 	"hexagony/lib/clog"
 	"hexagony/lib/crypto"
@@ -22,7 +23,7 @@ func NewUserHandler(c *chi.Mux, as domain.UserUseCase) {
 	handler := UserHandler{userUseCase: as}
 
 	c.Route("/user", func(r chi.Router) {
-		//	r.Use(cmiddleware.AuthMiddleware)
+		r.Use(cmiddleware.AuthMiddleware)
 
 		r.Get("/", handler.FindAll)
 		r.Get("/{uuid}", handler.FindByID)
