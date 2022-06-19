@@ -33,8 +33,8 @@ func NewAlbumHandler(c *chi.Mux, as domain.AlbumUseCase) {
 }
 
 type albumRequest struct {
-	Name   string        `json:"name" validate:"required"`
-	Length time.Duration `json:"length" validate:"required" swaggertype:"primitive,integer"`
+	Name   string `json:"name" validate:"required"`
+	Length int    `json:"length" validate:"required"`
 }
 
 // FindAll godoc

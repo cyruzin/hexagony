@@ -150,7 +150,7 @@ func TestUpdate(t *testing.T) {
 		mockUserRepo.On("Update",
 			mock.AnythingOfType("*context.emptyCtx"),
 			mock.AnythingOfType("uuid.UUID"),
-			mock.AnythingOfType("*domain.UserUpdate")).
+			mock.Anything).
 			Return(nil).Once()
 
 		a := NewUserUseCase(mockUserRepo)
@@ -164,7 +164,7 @@ func TestUpdate(t *testing.T) {
 		mockUserRepo.On("Update",
 			mock.AnythingOfType("*context.emptyCtx"),
 			mock.AnythingOfType("uuid.UUID"),
-			mock.AnythingOfType("*domain.UserUpdate")).
+			mock.Anything).
 			Return(errors.New("Unexpected error")).Once()
 
 		a := NewUserUseCase(mockUserRepo)

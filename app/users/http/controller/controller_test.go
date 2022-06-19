@@ -212,18 +212,7 @@ func TestAdd(t *testing.T) {
 }
 
 func TestAddFail(t *testing.T) {
-	now := time.Now()
-	newUUID := uuid.New()
 	mockUserUseCase := new(mocks.UserUseCase)
-
-	mockUser := &domain.User{
-		UUID:      newUUID,
-		Name:      "Cyro Dubeux",
-		Email:     "xorycx@gmail.com",
-		Password:  "12345678",
-		CreatedAt: now,
-		UpdatedAt: now,
-	}
 
 	mockUserUseCase.
 		On("Add", mock.Anything, mock.Anything).
@@ -235,8 +224,11 @@ func TestAddFail(t *testing.T) {
 
 	router := chi.NewRouter()
 
-	payload, err := json.Marshal(mockUser)
-	assert.NoError(t, err)
+	payload := []byte(`{
+		"name": "Cyro Dubeux",
+		"email": "xorycx@gmail.com", 
+		"password": "12345678"
+		}`)
 
 	req, err := http.NewRequest(http.MethodPost, "/user", bytes.NewBuffer(payload))
 	assert.NoError(t, err)
@@ -256,7 +248,7 @@ func TestAddFail(t *testing.T) {
 		On("Add", mock.Anything, mock.Anything).
 		Return(domain.ErrAdd)
 
-	mockUser2 := []byte(`{"id":"1"}`)
+	mockUser2 := []byte(`{"id:""1"}`)
 
 	req, err = http.NewRequest(http.MethodPost, "/user", bytes.NewBuffer(mockUser2))
 	assert.NoError(t, err)
@@ -270,7 +262,7 @@ func TestAddFail(t *testing.T) {
 
 	mockUserUseCase.AssertExpectations(t)
 
-	// validation errors
+	// // validation errors
 
 	mockUserUseCase.
 		On("Add", mock.Anything, mock.Anything).
@@ -390,7 +382,7 @@ func TestUpdateFail(t *testing.T) {
 		On("Update", mock.Anything, mock.Anything, mock.Anything).
 		Return(domain.ErrUpdate)
 
-	mockUser2 := []byte(`{"id":"1"}`)
+	mockUser2 := []byte(`{"id:""1"}`)
 
 	req, err = http.NewRequest(http.MethodPut, "/user/"+newUUID.String(), bytes.NewBuffer(mockUser2))
 	assert.NoError(t, err)

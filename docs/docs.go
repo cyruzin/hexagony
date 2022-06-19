@@ -275,7 +275,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.Auth"
+                            "$ref": "#/definitions/controller.authRequest"
                         }
                     }
                 ],
@@ -543,6 +543,22 @@ const docTemplate = `{
                 }
             }
         },
+        "controller.authRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8
+                }
+            }
+        },
         "controller.createUserRequest": {
             "type": "object",
             "required": [
@@ -584,10 +600,6 @@ const docTemplate = `{
         },
         "domain.Album": {
             "type": "object",
-            "required": [
-                "length",
-                "name"
-            ],
             "properties": {
                 "created_at": {
                     "type": "string"
@@ -606,22 +618,6 @@ const docTemplate = `{
                 }
             }
         },
-        "domain.Auth": {
-            "type": "object",
-            "required": [
-                "email",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string",
-                    "minLength": 8
-                }
-            }
-        },
         "domain.AuthToken": {
             "type": "object",
             "properties": {
@@ -632,11 +628,6 @@ const docTemplate = `{
         },
         "domain.User": {
             "type": "object",
-            "required": [
-                "email",
-                "name",
-                "password"
-            ],
             "properties": {
                 "created_at": {
                     "type": "string"
@@ -651,8 +642,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "password": {
-                    "type": "string",
-                    "minLength": 8
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"

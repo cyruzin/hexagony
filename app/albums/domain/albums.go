@@ -8,11 +8,11 @@ import (
 )
 
 type Album struct {
-	UUID      uuid.UUID     `db:"uuid" json:"id"`
-	Name      string        `db:"name" json:"name"`
-	Length    time.Duration `db:"length" json:"length"`
-	CreatedAt time.Time     `db:"created_at" json:"created_at" `
-	UpdatedAt time.Time     `db:"updated_at" json:"updated_at" `
+	UUID      uuid.UUID `db:"uuid" json:"id"`
+	Name      string    `db:"name" json:"name"`
+	Length    int       `db:"length" json:"length"`
+	CreatedAt time.Time `db:"created_at" json:"created_at" `
+	UpdatedAt time.Time `db:"updated_at" json:"updated_at" `
 }
 
 type AlbumRepository interface {

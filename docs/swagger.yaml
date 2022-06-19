@@ -9,6 +9,17 @@ definitions:
     - length
     - name
     type: object
+  controller.authRequest:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
   controller.createUserRequest:
     properties:
       email:
@@ -48,20 +59,6 @@ definitions:
         type: string
       updated_at:
         type: string
-    required:
-    - length
-    - name
-    type: object
-  domain.Auth:
-    properties:
-      email:
-        type: string
-      password:
-        minLength: 8
-        type: string
-    required:
-    - email
-    - password
     type: object
   domain.AuthToken:
     properties:
@@ -79,14 +76,9 @@ definitions:
       name:
         type: string
       password:
-        minLength: 8
         type: string
       updated_at:
         type: string
-    required:
-    - email
-    - name
-    - password
     type: object
   rest.Message:
     properties:
@@ -275,7 +267,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/domain.Auth'
+          $ref: '#/definitions/controller.authRequest'
       produces:
       - application/json
       responses:

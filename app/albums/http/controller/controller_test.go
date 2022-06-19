@@ -228,7 +228,7 @@ func TestAddFail(t *testing.T) {
 		On("Add", mock.Anything, mock.Anything).
 		Return(domain.ErrAdd)
 
-	mockAlbum2 := []byte(`{"id":"1"}`)
+	mockAlbum2 := []byte(`{"id:""1"}`)
 
 	req, err = http.NewRequest(http.MethodPost, "/album", bytes.NewBuffer(mockAlbum2))
 	assert.NoError(t, err)
@@ -352,7 +352,7 @@ func TestUpdateFail(t *testing.T) {
 		On("Update", mock.Anything, mock.Anything, mock.Anything).
 		Return(domain.ErrUpdate)
 
-	mockAlbum2 := []byte(`{"id":"1"}`)
+	mockAlbum2 := []byte(`{"id:""1"}`)
 
 	req, err = http.NewRequest(http.MethodPut, "/album/"+newUUID.String(), bytes.NewBuffer(mockAlbum2))
 	assert.NoError(t, err)

@@ -267,7 +267,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/domain.Auth"
+                            "$ref": "#/definitions/controller.authRequest"
                         }
                     }
                 ],
@@ -535,6 +535,22 @@
                 }
             }
         },
+        "controller.authRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 8
+                }
+            }
+        },
         "controller.createUserRequest": {
             "type": "object",
             "required": [
@@ -576,10 +592,6 @@
         },
         "domain.Album": {
             "type": "object",
-            "required": [
-                "length",
-                "name"
-            ],
             "properties": {
                 "created_at": {
                     "type": "string"
@@ -598,22 +610,6 @@
                 }
             }
         },
-        "domain.Auth": {
-            "type": "object",
-            "required": [
-                "email",
-                "password"
-            ],
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "password": {
-                    "type": "string",
-                    "minLength": 8
-                }
-            }
-        },
         "domain.AuthToken": {
             "type": "object",
             "properties": {
@@ -624,11 +620,6 @@
         },
         "domain.User": {
             "type": "object",
-            "required": [
-                "email",
-                "name",
-                "password"
-            ],
             "properties": {
                 "created_at": {
                     "type": "string"
@@ -643,8 +634,7 @@
                     "type": "string"
                 },
                 "password": {
-                    "type": "string",
-                    "minLength": 8
+                    "type": "string"
                 },
                 "updated_at": {
                     "type": "string"
