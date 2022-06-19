@@ -110,7 +110,7 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 
 	validation := validation.New()
 
-	if err := validation.Bind(r.Context(), payload); err != nil {
+	if err := validation.BindStruct(r.Context(), payload); err != nil {
 		validation.DecodeError(w, err)
 		return
 	}
@@ -164,7 +164,7 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	validation := validation.New()
 
-	if err := validation.Bind(r.Context(), payload); err != nil {
+	if err := validation.BindStruct(r.Context(), payload); err != nil {
 		clog.Error(err, domain.ErrUpdate.Error())
 		validation.DecodeError(w, err)
 		return

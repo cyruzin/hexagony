@@ -11,7 +11,8 @@ import (
 
 // Validator is an interface for validation purposes.
 type Validator interface {
-	Bind(ctx context.Context, data interface{}) error
+	BindStruct(ctx context.Context, data interface{}) error
+	BindField(ctx context.Context, data interface{}, tag string) error
 	DecodeError(w http.ResponseWriter, err error)
 }
 
@@ -40,9 +41,17 @@ func (v message) errorMap(err validator.FieldError) *message {
 	}
 }
 
-// Bind checks if the given struct is valid.
-func (v message) Bind(ctx context.Context, data interface{}) error {
+// BindStruct checks if the given struct is valid.
+func (v message) BindStruct(ctx context.Context, data interface{}) error {
 	if err := validator.New().StructCtx(ctx, data); err != nil {
+		return err
+	}
+	return nil
+}
+
+// BindField checks if the given field is valid.
+func (v message) BindField(ctx context.Context, data interface{}, tag string) error {
+	if err := validator.New().VarCtx(ctx, data, tag); err != nil {
 		return err
 	}
 	return nil

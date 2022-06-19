@@ -40,9 +40,8 @@ type createUserRequest struct {
 }
 
 type updateUserRequest struct {
-	Name     string `json:"name" validate:"required"`
-	Email    string `json:"email" validate:"required"`
-	Password string `json:"password" validate:"gte=8"`
+	Name  string `json:"name" validate:"required"`
+	Email string `json:"email" validate:"required"`
 }
 
 // FindAll godoc
@@ -118,7 +117,7 @@ func (u *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
 
 	validation := validation.New()
 
-	if err := validation.Bind(r.Context(), payload); err != nil {
+	if err := validation.BindStruct(r.Context(), payload); err != nil {
 		validation.DecodeError(w, err)
 		return
 	}
@@ -182,25 +181,15 @@ func (u *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	validation := validation.New()
 
-	if err := validation.Bind(r.Context(), payload); err != nil {
+	if err := validation.BindStruct(r.Context(), payload); err != nil {
 		clog.Error(err, domain.ErrUpdate.Error())
 		validation.DecodeError(w, err)
-		return
-	}
-
-	bcrypt := crypto.New()
-
-	hashPass, err := bcrypt.HashPassword(payload.Password, 10)
-	if err != nil {
-		clog.Error(err, domain.ErrAdd.Error())
-		rest.DecodeError(w, r, domain.ErrAdd, http.StatusUnprocessableEntity)
 		return
 	}
 
 	user := domain.User{
 		Name:      payload.Name,
 		Email:     payload.Email,
-		Password:  hashPass,
 		UpdatedAt: time.Now(),
 	}
 

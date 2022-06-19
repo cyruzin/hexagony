@@ -48,7 +48,7 @@ func (a *AuthHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	validation := validation.New()
 
-	if err := validation.Bind(r.Context(), payload); err != nil {
+	if err := validation.BindStruct(r.Context(), payload); err != nil {
 		validation.DecodeError(w, err)
 		return
 	}
