@@ -21,20 +21,25 @@ func NewAuthHandler(c *chi.Mux, auc domain.AuthUseCase) {
 	c.Post("/auth", handler.Authenticate)
 }
 
+type authRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password,omitempty" validate:"required,gte=8"`
+}
+
 // Auth godoc
 // @Summary      Authenticate a user
 // @Description  authenticate a user and returns a JWT token
 // @Tags         auth
 // @Accept       json
 // @Produce      json
-// @Param        payload  body      domain.User  true  "authenticates the user"
-// @Success      200      {object}  domain.User
+// @Param        payload  body      authRequest  true  "authenticates the user"
+// @Success      200      {object}  domain.AuthToken
 // @Failure      422      {object}  rest.Message
 // @Router       /auth [post]
 func (a *AuthHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
-	var user domain.Auth
+	var payload authRequest
 
-	err := json.NewDecoder(r.Body).Decode(&user)
+	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		clog.Error(err, domain.ErrAuth.Error())
 		rest.DecodeError(w, r, domain.ErrAuth, http.StatusUnprocessableEntity)
@@ -43,9 +48,14 @@ func (a *AuthHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 
 	validation := validation.New()
 
-	if err := validation.Bind(r.Context(), user); err != nil {
+	if err := validation.Bind(r.Context(), payload); err != nil {
 		validation.DecodeError(w, err)
 		return
+	}
+
+	user := domain.Auth{
+		Email:    payload.Email,
+		Password: payload.Password,
 	}
 
 	res, err := a.authUseCase.Authenticate(r.Context(), user.Email, user.Password)

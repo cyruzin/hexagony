@@ -21,7 +21,6 @@ func TestAuthenticate(t *testing.T) {
 		Name:      "Cyro Dubeux",
 		Email:     "xorycx@gmail.com",
 		Password:  "$2a$10$Vm8jmbPV5NMgoCag3O/iM.LTfMs6rmmwgDwRUw9m8QGFyis7EA/Gy",
-		Token:     "",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}

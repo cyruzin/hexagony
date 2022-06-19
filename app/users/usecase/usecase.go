@@ -38,7 +38,7 @@ func (u *userUseCase) Add(ctx context.Context, user *domain.User) error {
 	return nil
 }
 
-func (u *userUseCase) Update(ctx context.Context, uuid uuid.UUID, user *domain.UserUpdate) error {
+func (u *userUseCase) Update(ctx context.Context, uuid uuid.UUID, user *domain.User) error {
 	if err := u.userRepository.Update(ctx, uuid, user); err != nil {
 		return err
 	}

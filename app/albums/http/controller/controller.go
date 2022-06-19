@@ -32,6 +32,11 @@ func NewAlbumHandler(c *chi.Mux, as domain.AlbumUseCase) {
 	})
 }
 
+type albumRequest struct {
+	Name   string        `json:"name" validate:"required"`
+	Length time.Duration `json:"length" validate:"required" swaggertype:"primitive,integer"`
+}
+
 // FindAll godoc
 // @Summary      List of albums
 // @Description  lists all albums
@@ -89,14 +94,14 @@ func (a *AlbumHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 // @Accept       json
 // @Produce      json
 // @Param        Authorization  header    string        true  "Insert your access token"  default(Bearer <Add access token here>)
-// @Param        payload        body      domain.Album  true  "add a new album"
+// @Param        payload        body      albumRequest  true  "add a new album"
 // @Success      201            {object}  rest.Message
 // @Failure      422            {object}  rest.Message
 // @Router       /album [post]
 func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
-	var album domain.Album
+	var payload albumRequest
 
-	err := json.NewDecoder(r.Body).Decode(&album)
+	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		clog.Error(err, domain.ErrAdd.Error())
 		rest.DecodeError(w, r, domain.ErrAdd, http.StatusUnprocessableEntity)
@@ -105,14 +110,18 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 
 	validation := validation.New()
 
-	if err := validation.Bind(r.Context(), album); err != nil {
+	if err := validation.Bind(r.Context(), payload); err != nil {
 		validation.DecodeError(w, err)
 		return
 	}
 
-	album.UUID = uuid.New()
-	album.CreatedAt = time.Now()
-	album.UpdatedAt = time.Now()
+	album := domain.Album{
+		UUID:      uuid.New(),
+		Name:      payload.Name,
+		Length:    payload.Length,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
 
 	err = a.albumUseCase.Add(r.Context(), &album)
 	if err != nil {
@@ -132,7 +141,7 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        Authorization  header    string        true  "Insert your access token"  default(Bearer <Add access token here>)
 // @Param        uuid           path      string        true  "album uuid"
-// @Param        payload        body      domain.Album  true  "update an album by uuid"
+// @Param        payload        body      albumRequest  true  "update an album by uuid"
 // @Success      200            {object}  rest.Message
 // @Failure      422            {object}  rest.Message
 // @Router       /album/{uuid} [put]
@@ -144,9 +153,9 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var album domain.Album
+	var payload albumRequest
 
-	err = json.NewDecoder(r.Body).Decode(&album)
+	err = json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		clog.Error(err, domain.ErrUpdate.Error())
 		rest.DecodeError(w, r, domain.ErrUpdate, http.StatusUnprocessableEntity)
@@ -155,13 +164,17 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	validation := validation.New()
 
-	if err := validation.Bind(r.Context(), album); err != nil {
+	if err := validation.Bind(r.Context(), payload); err != nil {
 		clog.Error(err, domain.ErrUpdate.Error())
 		validation.DecodeError(w, err)
 		return
 	}
 
-	album.UpdatedAt = time.Now()
+	album := domain.Album{
+		Name:      payload.Name,
+		Length:    payload.Length,
+		UpdatedAt: time.Now(),
+	}
 
 	err = a.albumUseCase.Update(r.Context(), uuid, &album)
 	if err != nil {

@@ -33,6 +33,18 @@ func NewUserHandler(c *chi.Mux, as domain.UserUseCase) {
 	})
 }
 
+type createUserRequest struct {
+	Name     string `json:"name" validate:"required"`
+	Email    string `json:"email" validate:"required"`
+	Password string `json:"password" validate:"required,gte=8"`
+}
+
+type updateUserRequest struct {
+	Name     string `json:"name" validate:"required"`
+	Email    string `json:"email" validate:"required"`
+	Password string `json:"password" validate:"gte=8"`
+}
+
 // FindAll godoc
 // @Summary      List of users
 // @Description  lists all users
@@ -89,15 +101,15 @@ func (u *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 // @Tags         user
 // @Accept       json
 // @Produce      json
-// @Param        Authorization  header    string       true  "Insert your access token"  default(Bearer <Add access token here>)
-// @Param        payload        body      domain.User  true  "add a new user"
+// @Param        Authorization  header    string             true  "Insert your access token"  default(Bearer <Add access token here>)
+// @Param        payload        body      createUserRequest  true  "add a new user"
 // @Success      201            {object}  rest.Message
 // @Failure      422            {object}  rest.Message
 // @Router       /user [post]
 func (u *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
-	var user domain.User
+	var payload createUserRequest
 
-	err := json.NewDecoder(r.Body).Decode(&user)
+	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		clog.Error(err, domain.ErrAdd.Error())
 		rest.DecodeError(w, r, domain.ErrAdd, http.StatusUnprocessableEntity)
@@ -106,25 +118,28 @@ func (u *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
 
 	validation := validation.New()
 
-	if err := validation.Bind(r.Context(), user); err != nil {
+	if err := validation.Bind(r.Context(), payload); err != nil {
 		validation.DecodeError(w, err)
 		return
 	}
 
-	user.UUID = uuid.New()
-	user.CreatedAt = time.Now()
-	user.UpdatedAt = time.Now()
-
 	bcrypt := crypto.New()
 
-	hashPass, err := bcrypt.HashPassword(user.Password, 10)
+	hashPass, err := bcrypt.HashPassword(payload.Password, 10)
 	if err != nil {
 		clog.Error(err, domain.ErrHashPassword.Error())
 		rest.DecodeError(w, r, domain.ErrHashPassword, http.StatusUnprocessableEntity)
 		return
 	}
 
-	user.Password = hashPass
+	user := domain.User{
+		UUID:      uuid.New(),
+		Name:      payload.Name,
+		Email:     payload.Email,
+		Password:  hashPass,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
 
 	err = u.userUseCase.Add(r.Context(), &user)
 	if err != nil {
@@ -144,7 +159,7 @@ func (u *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        Authorization  header    string             true  "Insert your access token"  default(Bearer <Add access token here>)
 // @Param        uuid           path      string             true  "user uuid"
-// @Param        payload        body      domain.UserUpdate  true  "update an user by uuid"
+// @Param        payload        body      updateUserRequest  true  "update an user by uuid"
 // @Success      200            {object}  rest.Message
 // @Failure      422            {object}  rest.Message
 // @Router       /user/{uuid} [put]
@@ -156,9 +171,9 @@ func (u *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user domain.UserUpdate
+	var payload updateUserRequest
 
-	err = json.NewDecoder(r.Body).Decode(&user)
+	err = json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		clog.Error(err, domain.ErrUpdate.Error())
 		rest.DecodeError(w, r, domain.ErrUpdate, http.StatusUnprocessableEntity)
@@ -167,24 +182,27 @@ func (u *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	validation := validation.New()
 
-	if err := validation.Bind(r.Context(), user); err != nil {
+	if err := validation.Bind(r.Context(), payload); err != nil {
 		clog.Error(err, domain.ErrUpdate.Error())
 		validation.DecodeError(w, err)
 		return
 	}
 
-	user.UpdatedAt = time.Now()
-
 	bcrypt := crypto.New()
 
-	hashPass, err := bcrypt.HashPassword(user.Password, 10)
+	hashPass, err := bcrypt.HashPassword(payload.Password, 10)
 	if err != nil {
 		clog.Error(err, domain.ErrAdd.Error())
 		rest.DecodeError(w, r, domain.ErrAdd, http.StatusUnprocessableEntity)
 		return
 	}
 
-	user.Password = hashPass
+	user := domain.User{
+		Name:      payload.Name,
+		Email:     payload.Email,
+		Password:  hashPass,
+		UpdatedAt: time.Now(),
+	}
 
 	err = u.userUseCase.Update(r.Context(), uuid, &user)
 	if err != nil {

@@ -76,7 +76,7 @@ func (r *mariadbRepository) Add(
 func (r *mariadbRepository) Update(
 	ctx context.Context,
 	uuid uuid.UUID,
-	user *domain.UserUpdate,
+	user *domain.User,
 ) error {
 	result, err := r.conn.ExecContext(
 		ctx,

@@ -139,7 +139,7 @@ func TestAdd(t *testing.T) {
 func TestUpdate(t *testing.T) {
 	newUUID := uuid.New()
 	mockUserRepo := new(mocks.UserRepository)
-	mockUser := &domain.UserUpdate{
+	mockUser := &domain.User{
 		Name:      "Cyro Dubeux",
 		Email:     "xorycx@gmailcom",
 		Password:  "12345678",

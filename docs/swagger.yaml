@@ -1,4 +1,41 @@
 definitions:
+  controller.albumRequest:
+    properties:
+      length:
+        type: integer
+      name:
+        type: string
+    required:
+    - length
+    - name
+    type: object
+  controller.createUserRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - email
+    - name
+    - password
+    type: object
+  controller.updateUserRequest:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - email
+    - name
+    type: object
   domain.Album:
     properties:
       created_at:
@@ -15,6 +52,22 @@ definitions:
     - length
     - name
     type: object
+  domain.Auth:
+    properties:
+      email:
+        type: string
+      password:
+        minLength: 8
+        type: string
+    required:
+    - email
+    - password
+    type: object
+  domain.AuthToken:
+    properties:
+      token:
+        type: string
+    type: object
   domain.User:
     properties:
       created_at:
@@ -28,33 +81,12 @@ definitions:
       password:
         minLength: 8
         type: string
-      token:
-        type: string
       updated_at:
         type: string
     required:
     - email
     - name
     - password
-    type: object
-  domain.UserUpdate:
-    properties:
-      created_at:
-        type: string
-      email:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
-      password:
-        minLength: 8
-        type: string
-      updated_at:
-        type: string
-    required:
-    - email
-    - name
     type: object
   rest.Message:
     properties:
@@ -120,7 +152,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/domain.Album'
+          $ref: '#/definitions/controller.albumRequest'
       produces:
       - application/json
       responses:
@@ -217,7 +249,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/domain.Album'
+          $ref: '#/definitions/controller.albumRequest'
       produces:
       - application/json
       responses:
@@ -243,14 +275,14 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/domain.User'
+          $ref: '#/definitions/domain.Auth'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/domain.User'
+            $ref: '#/definitions/domain.AuthToken'
         "422":
           description: Unprocessable Entity
           schema:
@@ -302,7 +334,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/domain.User'
+          $ref: '#/definitions/controller.createUserRequest'
       produces:
       - application/json
       responses:
@@ -399,7 +431,7 @@ paths:
         name: payload
         required: true
         schema:
-          $ref: '#/definitions/domain.UserUpdate'
+          $ref: '#/definitions/controller.updateUserRequest'
       produces:
       - application/json
       responses:

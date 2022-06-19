@@ -243,7 +243,7 @@ func TestStoreFail(t *testing.T) {
 func TestUpdate(t *testing.T) {
 	now := time.Now()
 	newUUID := uuid.New()
-	user := &domain.UserUpdate{
+	user := &domain.User{
 		UUID:      newUUID,
 		Name:      "Cyro Dubeux",
 		Email:     "xorycx@gmail.com",
@@ -282,7 +282,7 @@ func TestUpdate(t *testing.T) {
 
 func TestUpdateFail(t *testing.T) {
 	newUUID := uuid.New()
-	user := &domain.UserUpdate{}
+	user := &domain.User{}
 
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -316,7 +316,7 @@ func TestUpdateFail(t *testing.T) {
 func TestUpdateRowsAffected(t *testing.T) {
 	now := time.Now()
 	newUUID := uuid.New()
-	user := &domain.UserUpdate{
+	user := &domain.User{
 		UUID:      newUUID,
 		Name:      "Cyro Dubeux",
 		Email:     "xorycx@gmail.com",
@@ -360,7 +360,7 @@ func TestUpdateRowsAffected(t *testing.T) {
 func TestUpdateRowsAffectedFail(t *testing.T) {
 	now := time.Now()
 	newUUID := uuid.New()
-	user := &domain.UserUpdate{
+	user := &domain.User{
 		UUID:      newUUID,
 		Name:      "Cyro Dubeux",
 		Email:     "xorycx@gmail.com",
