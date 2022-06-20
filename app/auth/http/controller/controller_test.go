@@ -119,7 +119,7 @@ func TestAuthenticateFailDecode(t *testing.T) {
 	router.HandleFunc("/auth", handler.Authenticate)
 	router.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 }
 
 func TestAuthenticateFailValidation(t *testing.T) {

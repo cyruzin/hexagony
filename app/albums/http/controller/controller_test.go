@@ -77,7 +77,7 @@ func TestFindAllFail(t *testing.T) {
 	router.HandleFunc("/album", handler.FindAll)
 	router.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 
 	mockAlbumUseCase.AssertExpectations(t)
 }
@@ -152,7 +152,7 @@ func TestFetchByIDFail(t *testing.T) {
 	router.HandleFunc("/album/{uuid}", handler.FindByID)
 	router.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 
 	mockAlbumUseCase.AssertExpectations(t)
 }
@@ -238,7 +238,7 @@ func TestAddFail(t *testing.T) {
 	router.HandleFunc("/album", handler.Add)
 	router.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 
 	mockAlbumUseCase.AssertExpectations(t)
 
@@ -342,7 +342,7 @@ func TestUpdateFail(t *testing.T) {
 	router.HandleFunc("/album/{uuid}", handler.Update)
 	router.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 
 	mockAlbumUseCase.AssertExpectations(t)
 
@@ -362,7 +362,7 @@ func TestUpdateFail(t *testing.T) {
 	router.HandleFunc("/album/{uuid}", handler.Update)
 	router.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 
 	mockAlbumUseCase.AssertExpectations(t)
 
@@ -454,7 +454,7 @@ func TestDeleteFail(t *testing.T) {
 	router.HandleFunc("/album/{uuid}", handler.Delete)
 	router.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 
 	mockAlbumUseCase.AssertExpectations(t)
 
