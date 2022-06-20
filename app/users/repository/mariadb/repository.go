@@ -65,7 +65,7 @@ func (r *mariadbRepository) Add(
 		user.Email,
 		user.Password,
 		user.CreatedAt,
-		user.CreatedAt,
+		user.UpdatedAt,
 	); err != nil {
 		return err
 	}

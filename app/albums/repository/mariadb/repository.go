@@ -64,7 +64,7 @@ func (r *mariadbRepository) Add(
 		album.Name,
 		album.Length,
 		album.CreatedAt,
-		album.CreatedAt,
+		album.UpdatedAt,
 	); err != nil {
 		return err
 	}
