@@ -118,8 +118,8 @@ paths:
             items:
               $ref: '#/definitions/domain.Album'
             type: array
-        "422":
-          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/rest.Message'
       summary: List of albums
@@ -149,8 +149,16 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/rest.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.Message'
         "422":
           description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.Message'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/rest.Message'
       summary: Add an album
@@ -184,6 +192,10 @@ paths:
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/rest.Message'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.Message'
       summary: Delete an album
       tags:
       - album
@@ -212,6 +224,10 @@ paths:
             $ref: '#/definitions/domain.Album'
         "422":
           description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.Message'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/rest.Message'
       summary: List an album
@@ -250,6 +266,10 @@ paths:
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/rest.Message'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.Message'
       summary: Update an album
       tags:
       - album
@@ -272,8 +292,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/domain.AuthToken'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.Message'
         "422":
           description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.Message'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/rest.Message'
       summary: Authenticate a user
@@ -300,8 +328,8 @@ paths:
             items:
               $ref: '#/definitions/domain.User'
             type: array
-        "422":
-          description: Unprocessable Entity
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/rest.Message'
       summary: List of users
@@ -331,8 +359,16 @@ paths:
           description: Created
           schema:
             $ref: '#/definitions/rest.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.Message'
         "422":
           description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.Message'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/rest.Message'
       summary: Add an user
@@ -366,6 +402,10 @@ paths:
           description: Unprocessable Entity
           schema:
             $ref: '#/definitions/rest.Message'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/rest.Message'
       summary: Delete an user
       tags:
       - user
@@ -394,6 +434,10 @@ paths:
             $ref: '#/definitions/domain.User'
         "422":
           description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.Message'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/rest.Message'
       summary: List an user
@@ -428,8 +472,16 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/rest.Message'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest.Message'
         "422":
           description: Unprocessable Entity
+          schema:
+            $ref: '#/definitions/rest.Message'
+        "500":
+          description: Internal Server Error
           schema:
             $ref: '#/definitions/rest.Message'
       summary: Update an user

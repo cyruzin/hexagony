@@ -45,13 +45,13 @@ type albumRequest struct {
 // @Produce      json
 // @Param        Authorization  header    string  true  "Insert your access token"  default(Bearer <Add access token here>)
 // @Success      200            {object}  []domain.Album
-// @Failure      422            {object}  rest.Message
+// @Failure      500            {object}  rest.Message
 // @Router       /album [get]
 func (a *AlbumHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 	albums, err := a.albumUseCase.FindAll(r.Context())
 	if err != nil {
 		clog.Error(err, domain.ErrFindAll.Error())
-		rest.DecodeError(w, r, domain.ErrFindAll, http.StatusUnprocessableEntity)
+		rest.DecodeError(w, r, domain.ErrFindAll, http.StatusInternalServerError)
 		return
 	}
 
@@ -68,12 +68,13 @@ func (a *AlbumHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 // @Param        uuid           path      string  true  "album uuid"
 // @Success      200            {object}  domain.Album
 // @Failure      422            {object}  rest.Message
+// @Failure      500            {object}  rest.Message
 // @Router       /album/{uuid} [get]
 func (a *AlbumHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
 		clog.Error(err, domain.ErrUUIDParse.Error())
-		rest.DecodeError(w, r, domain.ErrUUIDParse, http.StatusUnprocessableEntity)
+		rest.DecodeError(w, r, domain.ErrUUIDParse, http.StatusInternalServerError)
 		return
 	}
 
@@ -96,7 +97,9 @@ func (a *AlbumHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 // @Param        Authorization  header    string        true  "Insert your access token"  default(Bearer <Add access token here>)
 // @Param        payload        body      albumRequest  true  "add a new album"
 // @Success      201            {object}  rest.Message
+// @Failure      400            {object}  rest.Message
 // @Failure      422            {object}  rest.Message
+// @Failure      500            {object}  rest.Message
 // @Router       /album [post]
 func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 	var payload albumRequest
@@ -104,7 +107,7 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		clog.Error(err, domain.ErrAdd.Error())
-		rest.DecodeError(w, r, domain.ErrAdd, http.StatusUnprocessableEntity)
+		rest.DecodeError(w, r, domain.ErrAdd, http.StatusInternalServerError)
 		return
 	}
 
@@ -144,12 +147,13 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 // @Param        payload        body      albumRequest  true  "update an album by uuid"
 // @Success      200            {object}  rest.Message
 // @Failure      422            {object}  rest.Message
+// @Failure      500            {object}  rest.Message
 // @Router       /album/{uuid} [put]
 func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
 		clog.Error(err, domain.ErrUUIDParse.Error())
-		rest.DecodeError(w, r, domain.ErrUUIDParse, http.StatusUnprocessableEntity)
+		rest.DecodeError(w, r, domain.ErrUUIDParse, http.StatusInternalServerError)
 		return
 	}
 
@@ -158,7 +162,7 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 	err = json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		clog.Error(err, domain.ErrUpdate.Error())
-		rest.DecodeError(w, r, domain.ErrUpdate, http.StatusUnprocessableEntity)
+		rest.DecodeError(w, r, domain.ErrUpdate, http.StatusInternalServerError)
 		return
 	}
 
@@ -196,12 +200,13 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 // @Param        uuid           path      string  true  "album uuid"
 // @Success      200            {object}  rest.Message
 // @Failure      422            {object}  rest.Message
+// @Failure      500            {object}  rest.Message
 // @Router       /album/{uuid} [delete]
 func (a *AlbumHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
 		clog.Error(err, domain.ErrDelete.Error())
-		rest.DecodeError(w, r, domain.ErrDelete, http.StatusUnprocessableEntity)
+		rest.DecodeError(w, r, domain.ErrDelete, http.StatusInternalServerError)
 		return
 	}
 

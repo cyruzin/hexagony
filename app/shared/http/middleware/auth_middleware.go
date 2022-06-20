@@ -21,13 +21,13 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 		// Checking if the value is empty.
 		if tokenHeader == "" {
-			rest.DecodeError(w, r, errors.New("empty token"), http.StatusBadRequest)
+			rest.DecodeError(w, r, errors.New("unathorized"), http.StatusUnauthorized)
 			return
 		}
 
 		// Checking if the header contains Bearer string and if the token exists.
 		if !strings.Contains(tokenHeader, "Bearer") || len(strings.Split(tokenHeader, "Bearer ")) == 1 {
-			rest.DecodeError(w, r, errors.New("malformed token"), http.StatusBadRequest)
+			rest.DecodeError(w, r, errors.New("unathorized"), http.StatusUnauthorized) // malformed token
 			return
 		}
 
@@ -52,7 +52,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		if token.Valid {
 			next.ServeHTTP(w, r)
 		} else {
-			rest.DecodeError(w, r, errors.New("invalid jwt token"), http.StatusUnauthorized)
+			rest.DecodeError(w, r, errors.New("unathorized"), http.StatusUnauthorized)
 			return
 		}
 	})

@@ -35,6 +35,8 @@ type authRequest struct {
 // @Param        payload  body      authRequest  true  "authenticates the user"
 // @Success      200      {object}  domain.AuthToken
 // @Failure      422      {object}  rest.Message
+// @Failure      400      {object}  rest.Message
+// @Failure      500      {object}  rest.Message
 // @Router       /auth [post]
 func (a *AuthHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	var payload authRequest
@@ -42,7 +44,7 @@ func (a *AuthHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
 		clog.Error(err, domain.ErrAuth.Error())
-		rest.DecodeError(w, r, domain.ErrAuth, http.StatusUnprocessableEntity)
+		rest.DecodeError(w, r, domain.ErrAuth, http.StatusInternalServerError)
 		return
 	}
 
