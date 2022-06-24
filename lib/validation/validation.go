@@ -3,10 +3,20 @@ package validation
 import (
 	"context"
 	"encoding/json"
+	"hexagony/lib/clog"
 	"net/http"
-	"strings"
 
+	"github.com/go-playground/locales/en"
+	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
+	enTranslations "github.com/go-playground/validator/v10/translations/pt_BR"
+)
+
+// single instance for caching
+var (
+	uni      *ut.UniversalTranslator
+	validate *validator.Validate
+	trans    ut.Translator
 )
 
 // Validator is an interface for validation purposes.
@@ -27,23 +37,9 @@ type errors struct {
 	Errors []*message `json:"errors"`
 }
 
-// errorMap improves error messages.
-func (v message) errorMap(err validator.FieldError) *message {
-	errMap := map[string]string{
-		"required": "is required",
-		"email":    "is not valid",
-		"min":      "minimum length is " + err.Param(),
-		"gte":      "minimum length is " + err.Param(),
-	}
-
-	return &message{
-		Message: "the " + strings.ToLower(err.Field()) + " field " + errMap[err.Tag()],
-	}
-}
-
 // BindStruct checks if the given struct is valid.
 func (v message) BindStruct(ctx context.Context, data interface{}) error {
-	if err := validator.New().StructCtx(ctx, data); err != nil {
+	if err := validate.StructCtx(ctx, data); err != nil {
 		return err
 	}
 	return nil
@@ -51,7 +47,7 @@ func (v message) BindStruct(ctx context.Context, data interface{}) error {
 
 // BindField checks if the given field is valid.
 func (v message) BindField(ctx context.Context, data interface{}, tag string) error {
-	if err := validator.New().VarCtx(ctx, data, tag); err != nil {
+	if err := validate.VarCtx(ctx, data, tag); err != nil {
 		return err
 	}
 	return nil
@@ -60,14 +56,13 @@ func (v message) BindField(ctx context.Context, data interface{}, tag string) er
 // DecodeError returns validation error messages.
 func (v message) DecodeError(w http.ResponseWriter, err error) {
 	w.WriteHeader(http.StatusBadRequest)
-
-	message := &errors{}
+	payload := &errors{}
 
 	for _, err := range err.(validator.ValidationErrors) {
-		message.Errors = append(message.Errors, v.errorMap(err))
+		payload.Errors = append(payload.Errors, &message{Message: err.Translate(trans)})
 	}
 
-	if err := json.NewEncoder(w).Encode(message); err != nil {
+	if err := json.NewEncoder(w).Encode(payload); err != nil {
 		if _, err := w.Write([]byte("could not encode the payload")); err != nil {
 			return
 		}
@@ -77,5 +72,15 @@ func (v message) DecodeError(w http.ResponseWriter, err error) {
 
 // New creates a new Validator.
 func New() Validator {
+	en := en.New()
+	uni = ut.New(en, en)
+
+	trans, _ = uni.GetTranslator("en")
+
+	validate = validator.New()
+	if err := enTranslations.RegisterDefaultTranslations(validate, trans); err != nil {
+		clog.Error(err, "failed to register default translations")
+	}
+
 	return message{}
 }

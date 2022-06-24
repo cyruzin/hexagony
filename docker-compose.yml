@@ -5,7 +5,7 @@ services:
     image: mariadb:10.8.3
     container_name: hexagony-database
     hostname: hexagony-database
-    restart: always
+    restart: unless-stopped
     volumes:
       - ./db:/docker-entrypoint-initdb.d
       - ./db/.data:/var/lib/mysql
@@ -25,7 +25,7 @@ services:
       context: .
     container_name: hexagony-api
     hostname: hexagony-api
-    restart: always
+    restart: unless-stopped
     ports:
       - ${PORT}:${PORT}
     depends_on:
