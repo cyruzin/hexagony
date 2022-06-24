@@ -9,7 +9,7 @@ import (
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
-	enTranslations "github.com/go-playground/validator/v10/translations/pt_BR"
+	enTranslations "github.com/go-playground/validator/v10/translations/en"
 )
 
 // Validator is an interface for validation purposes.
