@@ -48,6 +48,10 @@ Use the following credentials:
 
 **Pass**: 12345678
 
+## Front-End Application
+
+Check the Hexagony front-end: https://github.com/williamscalado/hexagony-front-react
+
 ## Contributing
 
 Feel free to send pull requests, let's improve this project.
