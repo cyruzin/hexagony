@@ -1,7 +1,7 @@
 package mariadb
 
 const (
-	sqlFindAll = "SELECT * FROM users ORDER BY uuid DESC LIMIT 10"
+	sqlFindAll = "SELECT * FROM users ORDER BY updated_at DESC LIMIT 10"
 
 	sqlFindByID = "SELECT * FROM users WHERE uuid=?"
 
