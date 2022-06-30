@@ -5,7 +5,7 @@ import (
 	"errors"
 	authDomain "hexagony/internal/auth/domain"
 	usersDomain "hexagony/internal/users/domain"
-	"hexagony/lib/crypto"
+	"hexagony/pkg/crypto"
 	"os"
 	"time"
 

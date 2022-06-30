@@ -3,7 +3,7 @@ package validation
 import (
 	"context"
 	"encoding/json"
-	"hexagony/lib/clog"
+	"hexagony/pkg/clog"
 	"net/http"
 
 	"github.com/go-playground/locales/en"

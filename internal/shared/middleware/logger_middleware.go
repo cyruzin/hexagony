@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"hexagony/lib/clog"
+	"hexagony/pkg/clog"
 	"net/http"
 )
 

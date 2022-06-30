@@ -3,7 +3,7 @@ package middleware
 import (
 	"errors"
 	"fmt"
-	"hexagony/lib/rest"
+	"hexagony/pkg/rest"
 	"net/http"
 	"os"
 	"strings"

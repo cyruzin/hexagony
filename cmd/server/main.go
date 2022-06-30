@@ -9,7 +9,7 @@ import (
 	albumsRepository "hexagony/internal/albums/repository/mariadb"
 	usersController "hexagony/internal/users/controller"
 	usersRepository "hexagony/internal/users/repository/mariadb"
-	"hexagony/lib/clog"
+	"hexagony/pkg/clog"
 
 	authController "hexagony/internal/auth/controller"
 	authRepository "hexagony/internal/auth/repository/mariadb"

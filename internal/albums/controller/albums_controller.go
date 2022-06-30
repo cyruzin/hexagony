@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"hexagony/internal/albums/domain"
 	cmiddleware "hexagony/internal/shared/middleware"
-	"hexagony/lib/clog"
-	"hexagony/lib/rest"
-	"hexagony/lib/validation"
+	"hexagony/pkg/clog"
+	"hexagony/pkg/rest"
+	"hexagony/pkg/validation"
 	"net/http"
 	"time"
 

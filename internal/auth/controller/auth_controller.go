@@ -3,9 +3,9 @@ package controller
 import (
 	"encoding/json"
 	"hexagony/internal/auth/domain"
-	"hexagony/lib/clog"
-	"hexagony/lib/rest"
-	"hexagony/lib/validation"
+	"hexagony/pkg/clog"
+	"hexagony/pkg/rest"
+	"hexagony/pkg/validation"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
