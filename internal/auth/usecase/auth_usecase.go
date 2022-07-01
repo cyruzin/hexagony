@@ -41,19 +41,7 @@ func (a *authUseCase) Authenticate(ctx context.Context, email, password string) 
 		Email: user.Email,
 	}
 
-	jwtDuration := os.Getenv("JWT_DURATION")
-
-	if jwtDuration == "" {
-		jwtDuration = "60m"
-	}
-
-	duration, err := time.ParseDuration(jwtDuration)
-	if err != nil {
-		return nil, err
-	}
-
-	expiration := time.Duration(time.Minute * duration)
-	tokenExpiration := time.Now().Add(expiration)
+	tokenExpiration := time.Now().Add(1 * time.Hour) // 1 hour from now
 
 	token, err := a.generateToken("user", customClaims, tokenExpiration)
 	if err != nil {
