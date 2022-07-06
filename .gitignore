@@ -18,7 +18,8 @@
 # Env file
 *.env
 
-db/.data
+db/mariadb/.data
+db/postgres/.data
 
 # MacOS
 .DS_Store
