@@ -1,4 +1,4 @@
-package mariadb
+package postgres
 
 const (
 	sqlFindAll = "SELECT * FROM users ORDER BY updated_at DESC LIMIT 10"
