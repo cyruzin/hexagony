@@ -1,23 +1,45 @@
 version: "3.9"
 
 services:
-  mariadb:
-    image: mariadb:10.8.3
-    container_name: hexagony-database
-    hostname: hexagony-database
+  # mariadb:
+  #   image: mariadb:10.8.3
+  #   container_name: hexagony-database
+  #   hostname: hexagony-database
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./db/mariadb:/docker-entrypoint-initdb.d
+  #     - ./db/mariadb/.data:/var/lib/mysql
+  #   ports:
+  #     - ${DB_PORT}:${DB_PORT}
+  #   environment:
+  #     - MARIADB_ROOT_PASSWORD=${DB_PASS}
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin", "-u$DB_USER", "-p$DB_PASS", "ping", "-h", "localhost"]
+  #     interval: 10s
+  #     timeout: 5s
+  #     retries: 5
+  #   env_file: .env
+
+  postgres:
+    image: postgres:14.4-alpine
+    container_name: hexagony-database-pg
+    hostname: hexagony-database-pg
     restart: unless-stopped
     volumes:
-      - ./db:/docker-entrypoint-initdb.d
-      - ./db/.data:/var/lib/mysql
+      - ./db/postgres:/docker-entrypoint-initdb.d/
+      - ./db/postgres/.data:/var/lib/postgresql/data
     ports:
-      - ${DB_PORT}:${DB_PORT}
+      - ${POSTGRES_PORT}:${POSTGRES_PORT}
     environment:
-      - MARIADB_ROOT_PASSWORD=${DB_PASS}
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     healthcheck:
-      test: ["CMD", "mysqladmin", "-u$DB_USER", "-p$DB_PASS", "ping", "-h", "localhost"]
-      interval: 20s
-      timeout: 30s
-      retries: 3
+     test: ["CMD-SHELL", "pg_isready"]
+     interval: 10s
+     timeout: 5s
+     retries: 5
     env_file: .env
 
   api:
@@ -29,6 +51,6 @@ services:
     ports:
       - ${PORT}:${PORT}
     depends_on:
-      mariadb:
+      postgres: # change to mariadb if you want
         condition: service_healthy
     env_file: .env
