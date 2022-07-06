@@ -6,13 +6,13 @@ import (
 	"time"
 
 	albumsController "hexagony/internal/albums/controller"
-	albumsRepository "hexagony/internal/albums/repository/mariadb"
+	albumsRepository "hexagony/internal/albums/repository/postgres"
 	usersController "hexagony/internal/users/controller"
-	usersRepository "hexagony/internal/users/repository/mariadb"
+	usersRepository "hexagony/internal/users/repository/postgres"
 	"hexagony/pkg/clog"
 
 	authController "hexagony/internal/auth/controller"
-	authRepository "hexagony/internal/auth/repository/mariadb"
+	authRepository "hexagony/internal/auth/repository/postgres"
 	authUseCase "hexagony/internal/auth/usecase"
 
 	"net/http"
@@ -29,8 +29,9 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 
 	_ "hexagony/docs"
+	// _ "github.com/go-sql-driver/mysql"
 
-	_ "github.com/go-sql-driver/mysql"
+	_ "github.com/lib/pq"
 )
 
 // @title        Hexagony API
@@ -56,20 +57,36 @@ func main() {
 		clog.Info("running in production mode")
 	}
 
+	// databaseURL := fmt.Sprintf(
+	// 	"%s:%s@tcp(%s:%s)/%s?parseTime=true",
+	// 	os.Getenv("DB_USER"), os.Getenv("DB_PASS"), os.Getenv("DB_HOST"),
+	// 	os.Getenv("DB_PORT"), os.Getenv("DB_NAME"),
+	// )
+
+	// conn, err := sqlx.ConnectContext(ctx, "mysql", databaseURL) // mariadb uses the mysql driver
+	// if err != nil {
+	// 	clog.Fatal("mariadb failed to start")
+	// }
+	// defer conn.Close()
+
+	// if err := conn.PingContext(ctx); err != nil {
+	// 	clog.Fatal("could not ping mariadb database")
+	// }
+
 	databaseURL := fmt.Sprintf(
-		"%s:%s@tcp(%s:%s)/%s?parseTime=true",
-		os.Getenv("DB_USER"), os.Getenv("DB_PASS"), os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"), os.Getenv("DB_NAME"),
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+		os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"), os.Getenv("POSTGRES_USER"),
+		os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DB"),
 	)
 
-	conn, err := sqlx.ConnectContext(ctx, "mysql", databaseURL) // mariadb uses the mysql driver
+	conn, err := sqlx.ConnectContext(ctx, "postgres", databaseURL) // mariadb uses the mysql driver
 	if err != nil {
-		clog.Fatal("mariadb failed to start")
+		clog.Fatal("postgres failed to start")
 	}
 	defer conn.Close()
 
 	if err := conn.PingContext(ctx); err != nil {
-		clog.Fatal("could not ping the database")
+		clog.Fatal("could not ping postgres database")
 	}
 
 	router := chi.NewRouter()
@@ -100,13 +117,13 @@ func main() {
 
 	router.Get("/docs/*", httpSwagger.WrapHandler)
 
-	usersRepository := usersRepository.NewMariaDBRepository(conn)
+	usersRepository := usersRepository.NewPostgresRepository(conn)
 	usersController.NewUserHandler(router, usersRepository)
 
-	albumsRepository := albumsRepository.NewMariaDBRepository(conn)
+	albumsRepository := albumsRepository.NewPostgresRepository(conn)
 	albumsController.NewAlbumHandler(router, albumsRepository)
 
-	authRepository := authRepository.NewMariaDBRepository(conn)
+	authRepository := authRepository.NewPostgresRepository(conn)
 	authUseCase := authUseCase.NewAuthUsecase(authRepository)
 	authController.NewAuthHandler(router, authUseCase)
 
