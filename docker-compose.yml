@@ -31,7 +31,7 @@ services:
     ports:
       - ${POSTGRES_PORT}:${POSTGRES_PORT}
     environment:
-      - PGDATA=/var/lib/postgresql/data/pgdata
+      - PGDATA=/var/lib/postgresql/data/pgdata # named volume (windows workaround to persist data)
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}

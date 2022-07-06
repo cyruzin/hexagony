@@ -6,13 +6,13 @@ import (
 	"time"
 
 	albumsController "hexagony/internal/albums/controller"
-	albumsRepository "hexagony/internal/albums/repository/mariadb"
+	albumsRepository "hexagony/internal/albums/repository/postgres"
 	usersController "hexagony/internal/users/controller"
-	usersRepository "hexagony/internal/users/repository/mariadb"
+	usersRepository "hexagony/internal/users/repository/postgres"
 	"hexagony/pkg/clog"
 
 	authController "hexagony/internal/auth/controller"
-	authRepository "hexagony/internal/auth/repository/mariadb"
+	authRepository "hexagony/internal/auth/repository/postgres"
 	authUseCase "hexagony/internal/auth/usecase"
 
 	"net/http"
@@ -117,13 +117,13 @@ func main() {
 
 	router.Get("/docs/*", httpSwagger.WrapHandler)
 
-	usersRepository := usersRepository.NewMariaDBRepository(conn)
+	usersRepository := usersRepository.NewPostgresRepository(conn)
 	usersController.NewUserHandler(router, usersRepository)
 
-	albumsRepository := albumsRepository.NewMariaDBRepository(conn)
+	albumsRepository := albumsRepository.NewPostgresRepository(conn)
 	albumsController.NewAlbumHandler(router, albumsRepository)
 
-	authRepository := authRepository.NewMariaDBRepository(conn)
+	authRepository := authRepository.NewPostgresRepository(conn)
 	authUseCase := authUseCase.NewAuthUsecase(authRepository)
 	authController.NewAuthHandler(router, authUseCase)
 
