@@ -81,6 +81,7 @@ func main() {
 
 	conn, err := sqlx.ConnectContext(ctx, "postgres", databaseURL) // mariadb uses the mysql driver
 	if err != nil {
+		clog.Info(err.Error())
 		clog.Fatal("postgres failed to start")
 	}
 	defer conn.Close()
