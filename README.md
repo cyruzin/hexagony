@@ -25,6 +25,8 @@ $ docker-compose up -d --build
 
 Then, check the app up and running: http://localhost:8000.
 
+There's a online version running on Heroku: https://hexagony.herokuapp.com/
+
 ## Documentation
 
 Access: http://localhost:8000/docs/index.html
