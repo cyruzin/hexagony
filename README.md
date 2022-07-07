@@ -54,6 +54,8 @@ Use the following credentials:
 
 Check the Hexagony front-end: https://github.com/williamscalado/hexagony-front-react
 
+There's a online version running on Heroku: https://hexagony.vercel.app
+
 ## Contributing
 
 Feel free to send pull requests, let's improve this project.
