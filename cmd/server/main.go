@@ -45,7 +45,7 @@ import (
 // @license.name  MIT
 // @license.url   https://github.com/cyruzin/hexagony/blob/master/LICENSE
 
-// @host  localhost:8000
+// @host  hexagony.herokuapp.com
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
