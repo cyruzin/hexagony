@@ -50,11 +50,20 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	if os.Getenv("ENV_MODE") == "development" {
+	envMode := os.Getenv("ENV_MODE")
+
+	if envMode == "development" {
 		clog.UseConsoleOutput()
 		clog.Debug("running in development mode")
 	} else {
 		clog.Info("running in production mode")
+	}
+
+	// enable or disable postgres based on the environment
+	sslMode := "sslmode=disable"
+
+	if envMode == "production" {
+		sslMode = ""
 	}
 
 	// databaseURL := fmt.Sprintf(
@@ -74,13 +83,14 @@ func main() {
 	// }
 
 	databaseURL := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s",
+		"host=%s port=%s user=%s password=%s dbname=%s %s",
 		os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"), os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DB"),
+		os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DB"), sslMode,
 	)
 
 	conn, err := sqlx.ConnectContext(ctx, "postgres", databaseURL) // mariadb uses the mysql driver
 	if err != nil {
+		clog.Info(err.Error())
 		clog.Fatal("postgres failed to start")
 	}
 	defer conn.Close()
