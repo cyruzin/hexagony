@@ -59,13 +59,6 @@ func main() {
 		clog.Info("running in production mode")
 	}
 
-	// enable or disable postgres based on the environment
-	sslMode := "sslmode=disable"
-
-	if envMode == "production" {
-		sslMode = ""
-	}
-
 	// databaseURL := fmt.Sprintf(
 	// 	"%s:%s@tcp(%s:%s)/%s?parseTime=true",
 	// 	os.Getenv("DB_USER"), os.Getenv("DB_PASS"), os.Getenv("DB_HOST"),
@@ -82,13 +75,20 @@ func main() {
 	// 	clog.Fatal("could not ping mariadb database")
 	// }
 
+	// enable or disable postgres based on the environment
+	sslMode := "sslmode=disable"
+
+	if envMode == "production" {
+		sslMode = ""
+	}
+
 	databaseURL := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s %s",
 		os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"), os.Getenv("POSTGRES_USER"),
 		os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DB"), sslMode,
 	)
 
-	conn, err := sqlx.ConnectContext(ctx, "postgres", databaseURL) // mariadb uses the mysql driver
+	conn, err := sqlx.ConnectContext(ctx, "postgres", databaseURL)
 	if err != nil {
 		clog.Info(err.Error())
 		clog.Fatal("postgres failed to start")
@@ -108,7 +108,7 @@ func main() {
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
 		MaxAge:           300,
-		Debug:            os.Getenv("ENV_MODE") == "development",
+		Debug:            envMode == "development",
 	})
 
 	router.Use(

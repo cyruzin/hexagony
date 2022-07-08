@@ -262,7 +262,7 @@ func TestAddFail(t *testing.T) {
 
 	mockUserUseCase.AssertExpectations(t)
 
-	// // validation errors
+	// validation errors
 
 	mockUserUseCase.
 		On("Add", mock.Anything, mock.Anything).
