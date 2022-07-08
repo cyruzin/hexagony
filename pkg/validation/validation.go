@@ -30,7 +30,6 @@ type errors struct {
 	Errors []*message `json:"errors"`
 }
 
-// single instance for caching
 var (
 	uni      *ut.UniversalTranslator
 	validate *validator.Validate

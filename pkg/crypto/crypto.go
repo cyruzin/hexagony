@@ -2,11 +2,13 @@ package crypto
 
 import "golang.org/x/crypto/bcrypt"
 
+// Crypto interface to implement new algorithms.
 type Crypto interface {
 	HashPassword(password string, cost int) (string, error)
 	CheckPasswordHash(password, hash string) bool
 }
 
+// bcryptHash is the type used in bcrypt.
 type bcryptHash struct{}
 
 // HashPassword encrypts a given password using bcrypt algorithm.
@@ -26,6 +28,7 @@ func (b bcryptHash) CheckPasswordHash(password, hash string) bool {
 	return err == nil
 }
 
+// New creates a new instance to work with the bcrypt algorithm functions.
 func New() Crypto {
 	return &bcryptHash{}
 }

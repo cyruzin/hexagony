@@ -29,7 +29,6 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger"
 
 	_ "hexagony/docs"
-	// _ "github.com/go-sql-driver/mysql"
 
 	_ "github.com/lib/pq"
 )
@@ -59,35 +58,21 @@ func main() {
 		clog.Info("running in production mode")
 	}
 
-	// databaseURL := fmt.Sprintf(
-	// 	"%s:%s@tcp(%s:%s)/%s?parseTime=true",
-	// 	os.Getenv("DB_USER"), os.Getenv("DB_PASS"), os.Getenv("DB_HOST"),
-	// 	os.Getenv("DB_PORT"), os.Getenv("DB_NAME"),
-	// )
-
-	// conn, err := sqlx.ConnectContext(ctx, "mysql", databaseURL) // mariadb uses the mysql driver
-	// if err != nil {
-	// 	clog.Fatal("mariadb failed to start")
-	// }
-	// defer conn.Close()
-
-	// if err := conn.PingContext(ctx); err != nil {
-	// 	clog.Fatal("could not ping mariadb database")
-	// }
-
-	// enable or disable postgres based on the environment
+	// enabling or disabling postgres ssl mode based on the environment
 	sslMode := "sslmode=disable"
 
 	if envMode == "production" {
 		sslMode = ""
 	}
 
+	// postgres url string
 	databaseURL := fmt.Sprintf(
 		"host=%s port=%s user=%s password=%s dbname=%s %s",
 		os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"), os.Getenv("POSTGRES_USER"),
 		os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DB"), sslMode,
 	)
 
+	// connecting to postgres
 	conn, err := sqlx.ConnectContext(ctx, "postgres", databaseURL)
 	if err != nil {
 		clog.Info(err.Error())
@@ -101,6 +86,7 @@ func main() {
 
 	router := chi.NewRouter()
 
+	// enabling CORS
 	cors := cors.New(cors.Options{
 		AllowedOrigins:   []string{"https://*", "http://*"},
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
@@ -111,6 +97,7 @@ func main() {
 		Debug:            envMode == "development",
 	})
 
+	// middlewares
 	router.Use(
 		middleware.Timeout(time.Second*60),
 		middleware.Recoverer,
@@ -119,14 +106,17 @@ func main() {
 		cors.Handler,
 	)
 
+	// root page
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
 		if _, err := w.Write([]byte("Welcome to Hexagony API")); err != nil {
 			return
 		}
 	})
 
+	// swagger documentation end-point
 	router.Get("/docs/*", httpSwagger.WrapHandler)
 
+	// domain instances
 	usersRepository := usersRepository.NewPostgresRepository(conn)
 	usersController.NewUserHandler(router, usersRepository)
 
@@ -137,6 +127,7 @@ func main() {
 	authUseCase := authUseCase.NewAuthUsecase(authRepository)
 	authController.NewAuthHandler(router, authUseCase)
 
+	// server configuration and timeouts
 	srv := &http.Server{
 		Addr:              ":" + os.Getenv("PORT"),
 		ReadTimeout:       time.Duration(time.Second * 5),
@@ -146,6 +137,7 @@ func main() {
 		Handler:           router,
 	}
 
+	// graceful shutdown
 	idleConnsClosed := make(chan struct{})
 
 	go func() {
