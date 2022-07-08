@@ -1,9 +1,9 @@
 package postgres
 
 const (
-	sqlFindAll = "SELECT * FROM users ORDER BY updated_at DESC LIMIT 10"
+	sqlFindAll = "SELECT uuid,name,email,created_at,updated_at FROM users ORDER BY updated_at DESC LIMIT 10"
 
-	sqlFindByID = "SELECT * FROM users WHERE uuid=$1"
+	sqlFindByID = "SELECT uuid,name,email,created_at,updated_at FROM users WHERE uuid=$1"
 
 	sqlAdd = `
 	INSERT INTO 
