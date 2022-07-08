@@ -11,11 +11,7 @@ const (
 	VALUES (?, ?, ?, ?, ?, ?)
 	`
 
-	sqlUpdate = `
-	UPDATE users 
-	SET name=?, email=?, password=?, updated_at=?
-	WHERE uuid=?
-	`
+	sqlUpdate = "UPDATE users SET name=?, email=?, updated_at=? WHERE uuid=?"
 
 	sqlDelete = "DELETE FROM users WHERE uuid=?"
 )

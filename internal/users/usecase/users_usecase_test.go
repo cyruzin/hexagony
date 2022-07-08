@@ -14,17 +14,16 @@ import (
 )
 
 func TestFindAll(t *testing.T) {
-	mockUserRepo := new(mocks.UserRepository)
-	mockUser := &domain.User{
+	mockUserRepo := mocks.NewUserRepository(t)
+	mockUser := &domain.UserList{
 		UUID:      uuid.New(),
 		Name:      "Cyro Dubeux",
 		Email:     "xorycx@gmailcom",
-		Password:  "12345678",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}
 
-	mockListUsers := make([]*domain.User, 0)
+	mockListUsers := make([]*domain.UserList, 0)
 	mockListUsers = append(mockListUsers, mockUser)
 
 	t.Run("success", func(t *testing.T) {
@@ -59,11 +58,10 @@ func TestFindAll(t *testing.T) {
 func TestFindByID(t *testing.T) {
 	newUUID := uuid.New()
 	mockUserRepo := new(mocks.UserRepository)
-	mockUser := &domain.User{
+	mockUser := &domain.UserList{
 		UUID:      newUUID,
 		Name:      "Cyro Dubeux",
 		Email:     "xorycx@gmailcom",
-		Password:  "12345678",
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	}

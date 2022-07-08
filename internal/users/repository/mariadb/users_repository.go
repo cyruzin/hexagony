@@ -19,8 +19,8 @@ func NewMariaDBRepository(conn *sqlx.DB) domain.UserRepository {
 
 func (r *mariadbRepository) FindAll(
 	ctx context.Context,
-) ([]*domain.User, error) {
-	var users []*domain.User
+) ([]*domain.UserList, error) {
+	var users []*domain.UserList
 
 	err := r.conn.SelectContext(
 		ctx,
@@ -37,8 +37,8 @@ func (r *mariadbRepository) FindAll(
 func (r *mariadbRepository) FindByID(
 	ctx context.Context,
 	uuid uuid.UUID,
-) (*domain.User, error) {
-	var user domain.User
+) (*domain.UserList, error) {
+	var user domain.UserList
 
 	err := r.conn.GetContext(
 		ctx,
@@ -83,7 +83,6 @@ func (r *mariadbRepository) Update(
 		sqlUpdate,
 		user.Name,
 		user.Email,
-		user.Password,
 		user.UpdatedAt,
 		uuid,
 	)

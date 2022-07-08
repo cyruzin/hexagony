@@ -13,8 +13,8 @@ const (
 
 	sqlUpdate = `
 	UPDATE users 
-	SET name=$1, email=$2, password=$3, updated_at=$4
-	WHERE uuid=$5
+	SET name=$1, email=$2, updated_at=$3
+	WHERE uuid=$4
 	`
 
 	sqlDelete = "DELETE FROM users WHERE uuid=$1"

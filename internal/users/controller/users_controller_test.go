@@ -28,13 +28,12 @@ func TestNewUserHandler(t *testing.T) {
 func TestFindAll(t *testing.T) {
 	now := time.Now()
 	mockUserUseCase := new(mocks.UserUseCase)
-	mockUserList := make([]*domain.User, 0)
+	mockUserList := make([]*domain.UserList, 0)
 
-	mockUser := domain.User{
+	mockUser := domain.UserList{
 		UUID:      uuid.New(),
 		Name:      "Cyro Dubeux",
 		Email:     "xorycX@gmail.com",
-		Password:  "12345678",
 		CreatedAt: now,
 		UpdatedAt: now,
 	}
@@ -94,11 +93,10 @@ func TestFetchByID(t *testing.T) {
 	newUUID := uuid.New()
 	mockUserUseCase := new(mocks.UserUseCase)
 
-	mockUser := &domain.User{
+	mockUser := &domain.UserList{
 		UUID:      newUUID,
 		Name:      "Cyro Dubeux",
 		Email:     "xorycx@gmail.com",
-		Password:  "12345678",
 		CreatedAt: now,
 		UpdatedAt: now,
 	}

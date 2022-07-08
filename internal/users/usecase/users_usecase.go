@@ -15,7 +15,7 @@ func NewUserUseCase(ur domain.UserRepository) domain.UserUseCase {
 	return &userUseCase{userRepository: ur}
 }
 
-func (u *userUseCase) FindAll(ctx context.Context) ([]*domain.User, error) {
+func (u *userUseCase) FindAll(ctx context.Context) ([]*domain.UserList, error) {
 	user, err := u.userRepository.FindAll(ctx)
 	if err != nil {
 		return nil, err
@@ -23,11 +23,12 @@ func (u *userUseCase) FindAll(ctx context.Context) ([]*domain.User, error) {
 	return user, nil
 }
 
-func (u *userUseCase) FindByID(ctx context.Context, uuid uuid.UUID) (*domain.User, error) {
+func (u *userUseCase) FindByID(ctx context.Context, uuid uuid.UUID) (*domain.UserList, error) {
 	user, err := u.userRepository.FindByID(ctx, uuid)
 	if err != nil {
 		return nil, err
 	}
+
 	return user, nil
 }
 

@@ -24,12 +24,11 @@ func TestFindAll(t *testing.T) {
 
 	dbx := sqlx.NewDb(db, "sqlmock")
 
-	mockUsers := []domain.User{
+	mockUsers := []domain.UserList{
 		{
 			UUID:      uuid.New(),
 			Name:      "Cyro Dubeux",
 			Email:     "xorycx@gmail.com",
-			Password:  "12345678",
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
@@ -37,7 +36,6 @@ func TestFindAll(t *testing.T) {
 			UUID:      uuid.New(),
 			Name:      "John Doe",
 			Email:     "john@doe.com",
-			Password:  "12345678",
 			CreatedAt: time.Now(),
 			UpdatedAt: time.Now(),
 		},
@@ -47,21 +45,18 @@ func TestFindAll(t *testing.T) {
 		"uuid",
 		"name",
 		"email",
-		"password",
 		"created_at",
 		"updated_at",
 	}).AddRow(
 		mockUsers[0].UUID,
 		mockUsers[0].Name,
 		mockUsers[0].Email,
-		mockUsers[0].Password,
 		mockUsers[0].CreatedAt,
 		mockUsers[0].UpdatedAt,
 	).AddRow(
 		mockUsers[1].UUID,
 		mockUsers[1].Name,
 		mockUsers[1].Email,
-		mockUsers[1].Password,
 		mockUsers[1].CreatedAt,
 		mockUsers[1].UpdatedAt,
 	)
@@ -92,11 +87,10 @@ func TestFindAllFail(t *testing.T) {
 		"uuid",
 		"name",
 		"email",
-		"password",
 		"created_at",
 		"updated_at",
 	}).
-		AddRow("", "", "", "", "", "")
+		AddRow("", "", "", "", "")
 
 	query := "SELECT \\* FROM users"
 	mock.ExpectQuery(query).WillReturnRows(rows)
@@ -123,11 +117,10 @@ func TestFindByID(t *testing.T) {
 		"uuid",
 		"name",
 		"email",
-		"password",
 		"created_at",
 		"updated_at",
 	}).
-		AddRow(newUUID, "Cyro Dubeux", "xorycx@gmail.com", "12345678", time.Now(), time.Now())
+		AddRow(newUUID, "Cyro Dubeux", "xorycx@gmail.com", time.Now(), time.Now())
 
 	query := "SELECT \\* FROM users WHERE uuid=\\$1"
 	mock.ExpectQuery(query).WillReturnRows(rows)
@@ -156,11 +149,10 @@ func TestGetByIDFail(t *testing.T) {
 		"uuid",
 		"name",
 		"email",
-		"password",
 		"created_at",
 		"updated_at",
 	}).
-		AddRow("", "", "", "", "", "")
+		AddRow("", "", "", "", "")
 
 	query := "SELECT \\* FROM users WHERE uuid=\\$1"
 	mock.ExpectQuery(query).WillReturnRows(rows)
@@ -206,7 +198,7 @@ func TestAdd(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestStoreFail(t *testing.T) {
+func TestAddFail(t *testing.T) {
 	user := &domain.User{}
 
 	db, mock, err := sqlmock.New()
@@ -247,7 +239,6 @@ func TestUpdate(t *testing.T) {
 		UUID:      newUUID,
 		Name:      "Cyro Dubeux",
 		Email:     "xorycx@gmail.com",
-		Password:  "12345678",
 		UpdatedAt: now,
 	}
 
@@ -260,18 +251,10 @@ func TestUpdate(t *testing.T) {
 
 	dbx := sqlx.NewDb(db, "sqlmock")
 
-	query := `
-		UPDATE users
-		SET
-		name=$1,
-		email=$2,
-		password=$3,
-		updated_at=$4
-		WHERE uuid=$5
-	`
+	query := "UPDATE users SET name=\\$1, email=\\$2, updated_at=\\$3 WHERE uuid=\\$4"
 
-	mock.ExpectExec(regexp.QuoteMeta(query)).
-		WithArgs(user.Name, user.Email, user.Password, user.UpdatedAt, user.UUID).
+	mock.ExpectExec(query).
+		WithArgs(user.Name, user.Email, user.UpdatedAt, user.UUID).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	userRepo := NewPostgresRepository(dbx)
@@ -298,13 +281,12 @@ func TestUpdateFail(t *testing.T) {
 		SET
 		name=$1,
 		email=$2,
-		password=$3,
-		updated_at=$4
-		WHERE uuid=$5
+		updated_at=$3 
+		WHERE uuid=$4
 	`
 
 	mock.ExpectExec(regexp.QuoteMeta(query)).
-		WithArgs("", "", "", "", "", "").
+		WithArgs("", "", "", "", "").
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 	userRepo := NewPostgresRepository(dbx)
@@ -320,7 +302,6 @@ func TestUpdateRowsAffected(t *testing.T) {
 		UUID:      newUUID,
 		Name:      "Cyro Dubeux",
 		Email:     "xorycx@gmail.com",
-		Password:  "12345678",
 		UpdatedAt: now,
 	}
 
@@ -338,15 +319,13 @@ func TestUpdateRowsAffected(t *testing.T) {
 		SET
 		name=$1,
 		email=$2,
-		password=$3,
-		updated_at=$4
-		WHERE uuid=$5
+		updated_at=$3
+		WHERE uuid=$4
 	`
 
 	mock.ExpectExec(regexp.QuoteMeta(query)).WithArgs(
 		user.Name,
 		user.Email,
-		user.Password,
 		user.UpdatedAt,
 		user.UUID,
 	).WillReturnResult(sqlmock.NewResult(1, 0))
@@ -364,7 +343,6 @@ func TestUpdateRowsAffectedFail(t *testing.T) {
 		UUID:      newUUID,
 		Name:      "Cyro Dubeux",
 		Email:     "xorycx@gmail.com",
-		Password:  "12345678",
 		UpdatedAt: now,
 	}
 
@@ -382,15 +360,13 @@ func TestUpdateRowsAffectedFail(t *testing.T) {
 		SET
 		name=$1,
 		email=$2,
-		password=$3,
-		updated_at=$4
-		WHERE uuid=$5
+		updated_at=$3
+		WHERE uuid=$4
 	`
 
 	mock.ExpectExec(regexp.QuoteMeta(query)).WithArgs(
 		user.Name,
 		user.Email,
-		user.Password,
 		user.UpdatedAt,
 		user.UUID,
 	).WillReturnResult(sqlmock.NewErrorResult(sql.ErrNoRows))
