@@ -61,7 +61,7 @@ func TestFindAll(t *testing.T) {
 		mockUsers[1].UpdatedAt,
 	)
 
-	query := "SELECT \\* FROM users"
+	query := "SELECT uuid,name,email,created_at,updated_at FROM users ORDER BY updated_at DESC LIMIT 10"
 
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
@@ -92,7 +92,7 @@ func TestFindAllFail(t *testing.T) {
 	}).
 		AddRow("", "", "", "", "")
 
-	query := "SELECT \\* FROM users"
+	query := "SELECT uuid,name,email,created_at,updated_at FROM users ORDER BY updated_at DESC LIMIT 10"
 	mock.ExpectQuery(query).WillReturnRows(rows)
 
 	userRepo := NewPostgresRepository(dbx)
@@ -122,8 +122,8 @@ func TestFindByID(t *testing.T) {
 	}).
 		AddRow(newUUID, "Cyro Dubeux", "xorycx@gmail.com", time.Now(), time.Now())
 
-	query := "SELECT \\* FROM users WHERE uuid=\\$1"
-	mock.ExpectQuery(query).WillReturnRows(rows)
+	query := "SELECT uuid,name,email,created_at,updated_at FROM users WHERE uuid=$1"
+	mock.ExpectQuery(regexp.QuoteMeta(query)).WillReturnRows(rows)
 
 	userRepo := NewPostgresRepository(dbx)
 	currentUser, err := userRepo.FindByID(context.TODO(), newUUID)
@@ -154,8 +154,8 @@ func TestGetByIDFail(t *testing.T) {
 	}).
 		AddRow("", "", "", "", "")
 
-	query := "SELECT \\* FROM users WHERE uuid=\\$1"
-	mock.ExpectQuery(query).WillReturnRows(rows)
+	query := "SELECT uuid,name,email,created_at,updated_at FROM users WHERE uuid=$1"
+	mock.ExpectQuery(regexp.QuoteMeta(query)).WillReturnRows(rows)
 
 	userRepo := NewPostgresRepository(dbx)
 	_, err = userRepo.FindByID(ctx, newUUID)
