@@ -33,6 +33,11 @@ import (
 	_ "github.com/lib/pq"
 )
 
+const (
+	development = "development"
+	production  = "production"
+)
+
 // @title        Hexagony API
 // @version      1.0
 // @description  Clean architecture example in Golang.
@@ -51,7 +56,7 @@ func main() {
 
 	envMode := os.Getenv("ENV_MODE")
 
-	if envMode == "development" {
+	if envMode == development {
 		clog.UseConsoleOutput()
 		clog.Debug("running in development mode")
 	} else {
@@ -65,7 +70,7 @@ func main() {
 		os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DB"),
 	)
 
-	if envMode == "production" { // get url from heroku if production
+	if envMode == production { // get url from heroku if production
 		databaseURL = os.Getenv("DATABASE_URL")
 	}
 
@@ -91,7 +96,7 @@ func main() {
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: true,
 		MaxAge:           300,
-		Debug:            envMode == "development",
+		Debug:            envMode == development,
 	})
 
 	// middlewares
