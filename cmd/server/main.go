@@ -58,19 +58,16 @@ func main() {
 		clog.Info("running in production mode")
 	}
 
-	// enabling or disabling postgres ssl mode based on the environment
-	sslMode := "sslmode=disable"
-
-	if envMode == "production" {
-		sslMode = ""
-	}
-
 	// postgres url string
 	databaseURL := fmt.Sprintf(
-		"host=%s port=%s user=%s password=%s dbname=%s %s",
+		"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
 		os.Getenv("POSTGRES_HOST"), os.Getenv("POSTGRES_PORT"), os.Getenv("POSTGRES_USER"),
-		os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DB"), sslMode,
+		os.Getenv("POSTGRES_PASSWORD"), os.Getenv("POSTGRES_DB"),
 	)
+
+	if envMode == "production" { // get url from heroku if production
+		databaseURL = os.Getenv("DATABASE_URL")
+	}
 
 	// connecting to postgres
 	conn, err := sqlx.ConnectContext(ctx, "postgres", databaseURL)
