@@ -87,7 +87,7 @@ func TestAuthenticateFail(t *testing.T) {
 	router.HandleFunc("/auth", handler.Authenticate)
 	router.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 
 	mockAuthUseCase.AssertExpectations(t)
 }
@@ -157,4 +157,74 @@ func TestNewHandler(t *testing.T) {
 	mockAuthUseCase := new(mocks.AuthUseCase)
 
 	NewAuthHandler(c, mockAuthUseCase)
+}
+
+func TestAuthenticateFailUser(t *testing.T) {
+	mockAuthUseCase := new(mocks.AuthUseCase)
+
+	mockAuthUseCase.
+		On("Authenticate",
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+		).
+		Return(nil, domain.ErrUserNotFound)
+
+	handler := AuthHandler{
+		authUseCase: mockAuthUseCase,
+	}
+
+	router := chi.NewRouter()
+
+	credentials := domain.Auth{Email: "xorycxxx@gmail.com", Password: "12345678"}
+
+	payload, err := json.Marshal(credentials)
+	assert.NoError(t, err)
+
+	req, err := http.NewRequest(http.MethodPost, "/auth", bytes.NewBuffer(payload))
+	assert.NoError(t, err)
+
+	rec := httptest.NewRecorder()
+
+	router.HandleFunc("/auth", handler.Authenticate)
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusUnauthorized, rec.Code)
+
+	mockAuthUseCase.AssertExpectations(t)
+}
+
+func TestAuthenticateFailPassword(t *testing.T) {
+	mockAuthUseCase := new(mocks.AuthUseCase)
+
+	mockAuthUseCase.
+		On("Authenticate",
+			mock.Anything,
+			mock.Anything,
+			mock.Anything,
+		).
+		Return(nil, domain.ErrPassword)
+
+	handler := AuthHandler{
+		authUseCase: mockAuthUseCase,
+	}
+
+	router := chi.NewRouter()
+
+	credentials := domain.Auth{Email: "xorycx@gmail.com", Password: "123456789"}
+
+	payload, err := json.Marshal(credentials)
+	assert.NoError(t, err)
+
+	req, err := http.NewRequest(http.MethodPost, "/auth", bytes.NewBuffer(payload))
+	assert.NoError(t, err)
+
+	rec := httptest.NewRecorder()
+
+	router.HandleFunc("/auth", handler.Authenticate)
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusUnauthorized, rec.Code)
+
+	mockAuthUseCase.AssertExpectations(t)
 }

@@ -18,4 +18,6 @@ const (
 	`
 
 	sqlDelete = "DELETE FROM users WHERE uuid=$1"
+
+	sqlCheckDuplicate = "SELECT email FROM users WHERE email=$1"
 )

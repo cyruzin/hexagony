@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	authDomain "hexagony/internal/auth/domain"
 	userDomain "hexagony/internal/users/domain"
 
@@ -21,8 +22,14 @@ func (p *postgresRepository) Authenticate(ctx context.Context, email string) (*u
 	var user userDomain.User
 
 	err := p.Conn.GetContext(ctx, &user, sqlGetUser, email)
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
+	noRows := errors.Is(err, sql.ErrNoRows)
+
+	if noRows {
+		return nil, authDomain.ErrUserNotFound
+	}
+
+	if err != nil {
+		return nil, authDomain.ErrAuth
 	}
 
 	return &user, nil

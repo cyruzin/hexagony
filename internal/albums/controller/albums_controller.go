@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"errors"
 	"hexagony/internal/albums/domain"
 	cmiddleware "hexagony/internal/shared/middleware"
 	"hexagony/pkg/clog"
@@ -67,21 +68,29 @@ func (a *AlbumHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 // @Param        Authorization  header    string  true  "Insert your access token"  default(Bearer <Add access token here>)
 // @Param        uuid           path      string  true  "album uuid"
 // @Success      200            {object}  domain.Album
-// @Failure      422            {object}  rest.Message
+// @Failure      404            {object}  rest.Message
 // @Failure      500            {object}  rest.Message
 // @Router       /album/{uuid} [get]
 func (a *AlbumHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
 		clog.Error(err, domain.ErrUUIDParse.Error())
-		rest.DecodeError(w, r, domain.ErrUUIDParse, http.StatusInternalServerError)
+		rest.DecodeError(w, r, domain.ErrFindByID, http.StatusInternalServerError)
 		return
 	}
 
 	album, err := a.albumUseCase.FindByID(r.Context(), uuid)
+
+	exists := errors.Is(err, domain.ErrResourceNotFound)
+	if exists {
+		clog.Error(err, domain.ErrResourceNotFound.Error())
+		rest.DecodeError(w, r, domain.ErrResourceNotFound, http.StatusNotFound)
+		return
+	}
+
 	if err != nil {
-		clog.Error(err, domain.ErrFindByID.Error())
-		rest.DecodeError(w, r, domain.ErrFindByID, http.StatusUnprocessableEntity)
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -98,7 +107,6 @@ func (a *AlbumHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 // @Param        payload        body      albumRequest  true  "add a new album"
 // @Success      201            {object}  rest.Message
 // @Failure      400            {object}  rest.Message
-// @Failure      422            {object}  rest.Message
 // @Failure      500            {object}  rest.Message
 // @Router       /album [post]
 func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
@@ -128,8 +136,8 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 
 	err = a.albumUseCase.Add(r.Context(), &album)
 	if err != nil {
-		clog.Error(err, domain.ErrAdd.Error())
-		rest.DecodeError(w, r, domain.ErrAdd, http.StatusUnprocessableEntity)
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -146,14 +154,14 @@ func (a *AlbumHandler) Add(w http.ResponseWriter, r *http.Request) {
 // @Param        uuid           path      string        true  "album uuid"
 // @Param        payload        body      albumRequest  true  "update an album by uuid"
 // @Success      200            {object}  rest.Message
-// @Failure      422            {object}  rest.Message
+// @Failure      404            {object}  rest.Message
 // @Failure      500            {object}  rest.Message
 // @Router       /album/{uuid} [put]
 func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
 		clog.Error(err, domain.ErrUUIDParse.Error())
-		rest.DecodeError(w, r, domain.ErrUUIDParse, http.StatusInternalServerError)
+		rest.DecodeError(w, r, domain.ErrUpdate, http.StatusInternalServerError)
 		return
 	}
 
@@ -161,8 +169,8 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		clog.Error(err, domain.ErrUpdate.Error())
-		rest.DecodeError(w, r, domain.ErrUpdate, http.StatusInternalServerError)
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -181,9 +189,17 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = a.albumUseCase.Update(r.Context(), uuid, &album)
+
+	exists := errors.Is(err, domain.ErrResourceNotFound)
+	if exists {
+		clog.Error(err, domain.ErrResourceNotFound.Error())
+		rest.DecodeError(w, r, domain.ErrResourceNotFound, http.StatusNotFound)
+		return
+	}
+
 	if err != nil {
-		clog.Error(err, domain.ErrUpdate.Error())
-		rest.DecodeError(w, r, domain.ErrUpdate, http.StatusUnprocessableEntity)
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -199,21 +215,29 @@ func (a *AlbumHandler) Update(w http.ResponseWriter, r *http.Request) {
 // @Param        Authorization  header    string  true  "Insert your access token"  default(Bearer <Add access token here>)
 // @Param        uuid           path      string  true  "album uuid"
 // @Success      200            {object}  rest.Message
-// @Failure      422            {object}  rest.Message
+// @Failure      404            {object}  rest.Message
 // @Failure      500            {object}  rest.Message
 // @Router       /album/{uuid} [delete]
 func (a *AlbumHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
-		clog.Error(err, domain.ErrDelete.Error())
+		clog.Error(err, domain.ErrUUIDParse.Error())
 		rest.DecodeError(w, r, domain.ErrDelete, http.StatusInternalServerError)
 		return
 	}
 
 	err = a.albumUseCase.Delete(r.Context(), uuid)
+
+	exists := errors.Is(err, domain.ErrResourceNotFound)
+	if exists {
+		clog.Error(err, domain.ErrResourceNotFound.Error())
+		rest.DecodeError(w, r, domain.ErrResourceNotFound, http.StatusNotFound)
+		return
+	}
+
 	if err != nil {
-		clog.Error(err, domain.ErrDelete.Error())
-		rest.DecodeError(w, r, domain.ErrDelete, http.StatusUnprocessableEntity)
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusInternalServerError)
 		return
 	}
 

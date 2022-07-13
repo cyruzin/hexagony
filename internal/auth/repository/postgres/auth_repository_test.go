@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"database/sql"
 	domainUsers "hexagony/internal/users/domain"
 	"testing"
 	"time"
@@ -80,6 +81,36 @@ func TestAuthenticateFail(t *testing.T) {
 	query := "SELECT \\* from users WHERE email = \\$1"
 
 	mock.ExpectQuery(query).WillReturnRows(row)
+
+	authRepo := NewPostgresRepository(dbx)
+	user, err := authRepo.Authenticate(context.TODO(), "xorycx@gmail.com")
+
+	assert.Nil(t, user)
+	assert.Error(t, err)
+}
+
+func TestAuthenticateFailUser(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	defer db.Close()
+
+	dbx := sqlx.NewDb(db, "sqlmock")
+
+	row := sqlmock.NewRows([]string{
+		"uuid",
+		"name",
+		"email",
+		"password",
+		"created_at",
+		"updated_at",
+	}).AddRow("", "", "", "", "", "")
+
+	query := "SELECT \\* from users WHERE email = \\$1"
+
+	mock.ExpectQuery(query).WillReturnRows(row).WillReturnError(sql.ErrNoRows)
 
 	authRepo := NewPostgresRepository(dbx)
 	user, err := authRepo.Authenticate(context.TODO(), "xorycx@gmail.com")

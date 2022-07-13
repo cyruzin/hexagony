@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"errors"
 	authDomain "hexagony/internal/auth/domain"
 	usersDomain "hexagony/internal/users/domain"
 	"hexagony/pkg/crypto"
@@ -32,7 +31,7 @@ func (a *authUseCase) Authenticate(ctx context.Context, email, password string) 
 	bcrypt := crypto.New()
 
 	if match := bcrypt.CheckPasswordHash(password, user.Password); !match {
-		return nil, errors.New("authentication failed")
+		return nil, authDomain.ErrPassword
 	}
 
 	customClaims := &usersDomain.User{
@@ -45,7 +44,7 @@ func (a *authUseCase) Authenticate(ctx context.Context, email, password string) 
 
 	token, err := a.generateToken("user", customClaims, tokenExpiration)
 	if err != nil {
-		return nil, err
+		return nil, authDomain.ErrAuth
 	}
 
 	authToken := authDomain.AuthToken{Token: token}

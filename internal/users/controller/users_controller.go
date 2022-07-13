@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"errors"
 	cmiddleware "hexagony/internal/shared/middleware"
 	"hexagony/internal/users/domain"
 	"hexagony/pkg/clog"
@@ -57,8 +58,8 @@ type updateUserRequest struct {
 func (u *UserHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 	users, err := u.userUseCase.FindAll(r.Context())
 	if err != nil {
-		clog.Error(err, domain.ErrFindAll.Error())
-		rest.DecodeError(w, r, domain.ErrFindAll, http.StatusInternalServerError)
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -74,21 +75,29 @@ func (u *UserHandler) FindAll(w http.ResponseWriter, r *http.Request) {
 // @Param        Authorization  header    string  true  "Insert your access token"  default(Bearer <Add access token here>)
 // @Param        uuid           path      string  true  "user uuid"
 // @Success      200            {object}  domain.User
-// @Failure      422            {object}  rest.Message
+// @Failure      404            {object}  rest.Message
 // @Failure      500            {object}  rest.Message
 // @Router       /user/{uuid} [get]
 func (u *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
 		clog.Error(err, domain.ErrUUIDParse.Error())
-		rest.DecodeError(w, r, domain.ErrUUIDParse, http.StatusInternalServerError)
+		rest.DecodeError(w, r, domain.ErrFindByID, http.StatusInternalServerError)
 		return
 	}
 
 	user, err := u.userUseCase.FindByID(r.Context(), uuid)
+
+	exists := errors.Is(err, domain.ErrResourceNotFound)
+	if exists {
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusNotFound)
+		return
+	}
+
 	if err != nil {
-		clog.Error(err, domain.ErrFindByID.Error())
-		rest.DecodeError(w, r, domain.ErrFindByID, http.StatusUnprocessableEntity)
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -105,6 +114,7 @@ func (u *UserHandler) FindByID(w http.ResponseWriter, r *http.Request) {
 // @Param        payload        body      createUserRequest  true  "add a new user"
 // @Success      201            {object}  rest.Message
 // @Failure      400            {object}  rest.Message
+// @Failure      409            {object}  rest.Message
 // @Failure      422            {object}  rest.Message
 // @Failure      500            {object}  rest.Message
 // @Router       /user [post]
@@ -113,7 +123,7 @@ func (u *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		clog.Error(err, domain.ErrAdd.Error())
+		clog.Error(err, err.Error())
 		rest.DecodeError(w, r, domain.ErrAdd, http.StatusInternalServerError)
 		return
 	}
@@ -130,7 +140,7 @@ func (u *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
 	hashPass, err := bcrypt.HashPassword(payload.Password, 10)
 	if err != nil {
 		clog.Error(err, domain.ErrHashPassword.Error())
-		rest.DecodeError(w, r, domain.ErrHashPassword, http.StatusUnprocessableEntity)
+		rest.DecodeError(w, r, domain.ErrAdd, http.StatusUnprocessableEntity)
 		return
 	}
 
@@ -144,9 +154,18 @@ func (u *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = u.userUseCase.Add(r.Context(), &user)
+
+	isDuplicate := errors.Is(err, domain.ErrDuplicateEmail)
+
+	if isDuplicate {
+		clog.Error(err, domain.ErrDuplicateEmail.Error())
+		rest.DecodeError(w, r, domain.ErrDuplicateEmail, http.StatusConflict)
+		return
+	}
+
 	if err != nil {
-		clog.Error(err, domain.ErrAdd.Error())
-		rest.DecodeError(w, r, domain.ErrAdd, http.StatusUnprocessableEntity)
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -164,14 +183,14 @@ func (u *UserHandler) Add(w http.ResponseWriter, r *http.Request) {
 // @Param        payload        body      updateUserRequest  true  "update an user by uuid"
 // @Success      200            {object}  rest.Message
 // @Failure      400            {object}  rest.Message
-// @Failure      422            {object}  rest.Message
+// @Failure      404            {object}  rest.Message
 // @Failure      500            {object}  rest.Message
 // @Router       /user/{uuid} [put]
 func (u *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
 		clog.Error(err, domain.ErrUUIDParse.Error())
-		rest.DecodeError(w, r, domain.ErrUUIDParse, http.StatusInternalServerError)
+		rest.DecodeError(w, r, domain.ErrUpdate, http.StatusInternalServerError)
 		return
 	}
 
@@ -179,8 +198,8 @@ func (u *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 
 	err = json.NewDecoder(r.Body).Decode(&payload)
 	if err != nil {
-		clog.Error(err, domain.ErrUpdate.Error())
-		rest.DecodeError(w, r, domain.ErrUpdate, http.StatusUnprocessableEntity)
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -199,9 +218,17 @@ func (u *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	err = u.userUseCase.Update(r.Context(), uuid, &user)
+
+	exists := errors.Is(err, domain.ErrResourceNotFound)
+	if exists {
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusNotFound)
+		return
+	}
+
 	if err != nil {
-		clog.Error(err, domain.ErrUpdate.Error())
-		rest.DecodeError(w, r, domain.ErrUpdate, http.StatusUnprocessableEntity)
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
@@ -217,21 +244,29 @@ func (u *UserHandler) Update(w http.ResponseWriter, r *http.Request) {
 // @Param        Authorization  header    string  true  "Insert your access token"  default(Bearer <Add access token here>)
 // @Param        uuid           path      string  true  "user uuid"
 // @Success      200            {object}  rest.Message
-// @Failure      422            {object}  rest.Message
+// @Failure      404            {object}  rest.Message
 // @Failure      500            {object}  rest.Message
 // @Router       /user/{uuid} [delete]
 func (u *UserHandler) Delete(w http.ResponseWriter, r *http.Request) {
 	uuid, err := uuid.Parse(chi.URLParam(r, "uuid"))
 	if err != nil {
-		clog.Error(err, domain.ErrDelete.Error())
-		rest.DecodeError(w, r, domain.ErrDelete, http.StatusInternalServerError)
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusInternalServerError)
 		return
 	}
 
 	err = u.userUseCase.Delete(r.Context(), uuid)
+
+	exists := errors.Is(err, domain.ErrResourceNotFound)
+	if exists {
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusNotFound)
+		return
+	}
+
 	if err != nil {
-		clog.Error(err, domain.ErrDelete.Error())
-		rest.DecodeError(w, r, domain.ErrDelete, http.StatusUnprocessableEntity)
+		clog.Error(err, err.Error())
+		rest.DecodeError(w, r, err, http.StatusInternalServerError)
 		return
 	}
 

@@ -11,6 +11,13 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
+var (
+	errEmptyToken     = errors.New("empty token")
+	errMalformedToken = errors.New("malformed token")
+	errInvalidToken   = errors.New("invalid token")
+	errUnexpected     = errors.New("unexpected error")
+)
+
 // AuthMiddleware checks if the request contains Bearer Token
 // on the headers and if it is valid.
 func AuthMiddleware(next http.Handler) http.Handler {
@@ -21,13 +28,13 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 		// Checking if the value is empty.
 		if tokenHeader == "" {
-			rest.DecodeError(w, r, errors.New("unathorized"), http.StatusUnauthorized)
+			rest.DecodeError(w, r, errEmptyToken, http.StatusUnauthorized)
 			return
 		}
 
 		// Checking if the header contains Bearer string and if the token exists.
 		if !strings.Contains(tokenHeader, "Bearer") || len(strings.Split(tokenHeader, "Bearer ")) == 1 {
-			rest.DecodeError(w, r, errors.New("unathorized"), http.StatusUnauthorized) // malformed token
+			rest.DecodeError(w, r, errMalformedToken, http.StatusUnauthorized) // malformed token
 			return
 		}
 
@@ -44,7 +51,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 
 		// Returning parsing errors.
 		if err != nil {
-			rest.DecodeError(w, r, errors.New("unathorized"), http.StatusUnauthorized)
+			rest.DecodeError(w, r, errUnexpected, http.StatusUnauthorized)
 			return
 		}
 
@@ -52,7 +59,7 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		if token.Valid {
 			next.ServeHTTP(w, r)
 		} else {
-			rest.DecodeError(w, r, errors.New("unathorized"), http.StatusUnauthorized)
+			rest.DecodeError(w, r, errInvalidToken, http.StatusUnauthorized)
 			return
 		}
 	})
