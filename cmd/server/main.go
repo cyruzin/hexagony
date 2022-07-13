@@ -77,8 +77,7 @@ func main() {
 	// connecting to postgres
 	conn, err := sqlx.ConnectContext(ctx, "postgres", databaseURL)
 	if err != nil {
-		clog.Info(err.Error())
-		clog.Fatal("postgres failed to start")
+		clog.Fatal("postgres failed to start:" + err.Error())
 	}
 	defer conn.Close()
 
