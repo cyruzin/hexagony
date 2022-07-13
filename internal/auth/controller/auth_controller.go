@@ -2,6 +2,7 @@ package controller
 
 import (
 	"encoding/json"
+	"errors"
 	"hexagony/internal/auth/domain"
 	"hexagony/pkg/clog"
 	"hexagony/pkg/rest"
@@ -34,8 +35,8 @@ type authRequest struct {
 // @Produce      json
 // @Param        payload  body      authRequest  true  "authenticates the user"
 // @Success      200      {object}  domain.AuthToken
-// @Failure      422      {object}  rest.Message
 // @Failure      400      {object}  rest.Message
+// @Failure      401      {object}  rest.Message
 // @Failure      500      {object}  rest.Message
 // @Router       /auth [post]
 func (a *AuthHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
@@ -61,9 +62,24 @@ func (a *AuthHandler) Authenticate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res, err := a.authUseCase.Authenticate(r.Context(), user.Email, user.Password)
+
+	userNotFound := errors.Is(err, domain.ErrUserNotFound)
+	if userNotFound {
+		clog.Error(err, domain.ErrUserNotFound.Error())
+		rest.DecodeError(w, r, domain.ErrUserNotFound, http.StatusUnauthorized)
+		return
+	}
+
+	passwordMatch := errors.Is(err, domain.ErrPassword)
+	if passwordMatch {
+		clog.Error(err, domain.ErrPassword.Error())
+		rest.DecodeError(w, r, domain.ErrPassword, http.StatusUnauthorized)
+		return
+	}
+
 	if err != nil {
 		clog.Error(err, err.Error())
-		rest.DecodeError(w, r, domain.ErrAuth, http.StatusUnprocessableEntity)
+		rest.DecodeError(w, r, domain.ErrAuth, http.StatusInternalServerError)
 		return
 	}
 

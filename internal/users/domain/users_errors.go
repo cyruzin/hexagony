@@ -12,4 +12,5 @@ var (
 
 	ErrResourceNotFound = errors.New("the resource you requested could not be found")
 	ErrHashPassword     = errors.New("failed to hash the password")
+	ErrDuplicateEmail   = errors.New("this email already exists")
 )

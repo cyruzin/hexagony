@@ -101,6 +101,34 @@ func TestFindAllFail(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestFindAllFailResource(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	defer db.Close()
+
+	dbx := sqlx.NewDb(db, "sqlmock")
+
+	rows := sqlmock.NewRows([]string{
+		"uuid",
+		"name",
+		"email",
+		"created_at",
+		"updated_at",
+	}).
+		AddRow("", "", "", "", "")
+
+	query := "SELECT uuid,name,email,created_at,updated_at FROM users ORDER BY updated_at DESC LIMIT 10"
+	mock.ExpectQuery(query).WillReturnRows(rows).WillReturnError(sql.ErrNoRows)
+
+	userRepo := NewPostgresRepository(dbx)
+	users, _ := userRepo.FindAll(context.TODO())
+
+	assert.Nil(t, users)
+}
+
 func TestFindByID(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -163,6 +191,36 @@ func TestGetByIDFail(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestGetByIDFailResource(t *testing.T) {
+	newUUID := uuid.New()
+	ctx := context.TODO()
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	defer db.Close()
+
+	dbx := sqlx.NewDb(db, "sqlmock")
+
+	rows := sqlmock.NewRows([]string{
+		"uuid",
+		"name",
+		"email",
+		"created_at",
+		"updated_at",
+	}).
+		AddRow("", "", "", "", "")
+
+	query := "SELECT uuid,name,email,created_at,updated_at FROM users WHERE uuid=$1"
+	mock.ExpectQuery(regexp.QuoteMeta(query)).WillReturnRows(rows).WillReturnError(sql.ErrNoRows)
+
+	userRepo := NewPostgresRepository(dbx)
+	_, err = userRepo.FindByID(ctx, newUUID)
+
+	assert.NotNil(t, err)
+}
+
 func TestAdd(t *testing.T) {
 	now := time.Now()
 	newUUID := uuid.New()
@@ -183,6 +241,11 @@ func TestAdd(t *testing.T) {
 	defer db.Close()
 
 	dbx := sqlx.NewDb(db, "sqlmock")
+
+	rows := sqlmock.NewRows([]string{"email"}).AddRow("")
+
+	queryCheckDuplicate := "SELECT email FROM users WHERE email=$1"
+	mock.ExpectQuery(regexp.QuoteMeta(queryCheckDuplicate)).WillReturnRows(rows)
 
 	query := `INSERT INTO 
 	users (uuid, name, email, password, created_at, updated_at) 
@@ -224,6 +287,45 @@ func TestAddFail(t *testing.T) {
 
 	mock.ExpectExec(regexp.QuoteMeta(query)).
 		WithArgs("", "", "", "", "").
+		WillReturnResult(sqlmock.NewResult(1, 1)) // Using UUID
+
+	userRepo := NewPostgresRepository(dbx)
+	err = userRepo.Add(context.TODO(), user)
+
+	assert.NotNil(t, err)
+}
+
+func TestAddFailEmail(t *testing.T) {
+	user := &domain.User{Name: "xorycx@gmail.com"}
+	newUUID := uuid.New()
+
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	defer db.Close()
+
+	dbx := sqlx.NewDb(db, "sqlmock")
+
+	queryCheckDuplicate := "SELECT email FROM users WHERE email=$1"
+	mock.ExpectQuery(regexp.QuoteMeta(queryCheckDuplicate)).
+		WillReturnError(domain.ErrDuplicateEmail)
+
+	query := `
+	  INSERT INTO users (
+		uuid,
+		name,
+		email,
+		password,
+		created_at,
+		updated_at
+		)
+		VALUES ($1, $2, $3, $4, $5, $6)
+		`
+
+	mock.ExpectExec(regexp.QuoteMeta(query)).
+		WithArgs(newUUID, user.Name, user.Email, user.Password, user.CreatedAt, user.UpdatedAt).
 		WillReturnResult(sqlmock.NewResult(1, 1)) // Using UUID
 
 	userRepo := NewPostgresRepository(dbx)
@@ -465,6 +567,85 @@ func TestDeleteRowsAffectedFail(t *testing.T) {
 
 	userRepo := NewPostgresRepository(dbx)
 	err = userRepo.Delete(context.TODO(), newUUID)
+
+	assert.NotNil(t, err)
+}
+
+func TestCheckDuplicate(t *testing.T) {
+	now := time.Now()
+	newUUID := uuid.New()
+	user := &domain.User{
+		UUID:      newUUID,
+		Name:      "Cyro Dubeux",
+		Email:     "xorycx@gmail.com",
+		Password:  "12345678",
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	defer db.Close()
+
+	dbx := sqlx.NewDb(db, "sqlmock")
+
+	rows := sqlmock.NewRows([]string{"email"}).AddRow("xorycx@gmail.com")
+
+	queryCheckDuplicate := "SELECT email FROM users WHERE email=$1"
+	mock.ExpectQuery(regexp.QuoteMeta(queryCheckDuplicate)).
+		WillReturnRows(rows).
+		WillReturnError(sql.ErrNoRows)
+
+	query := `INSERT INTO 
+	users (uuid, name, email, password, created_at, updated_at) 
+	VALUES ($1, $2, $3, $4, $5, $6)`
+
+	mock.ExpectQuery(query).WillReturnRows(rows)
+
+	userRepo := NewPostgresRepository(dbx)
+	err = userRepo.Add(context.TODO(), user)
+
+	assert.NotNil(t, err)
+}
+
+func TestCheckDuplicateFail(t *testing.T) {
+	now := time.Now()
+	newUUID := uuid.New()
+	user := &domain.User{
+		UUID:      newUUID,
+		Name:      "John Doe",
+		Email:     "john@doe.com",
+		Password:  "12345678",
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	defer db.Close()
+
+	dbx := sqlx.NewDb(db, "sqlmock")
+
+	rows := sqlmock.NewRows([]string{"email"}).AddRow("xorycx@gmail.com")
+
+	queryCheckDuplicate := "SELECT email FROM users WHERE email=$1"
+	mock.ExpectQuery(regexp.QuoteMeta(queryCheckDuplicate)).
+		WillReturnRows(rows)
+
+	query := `INSERT INTO 
+	users (uuid, name, email, password, created_at, updated_at) 
+	VALUES ($1, $2, $3, $4, $5, $6)`
+
+	mock.ExpectQuery(query).WillReturnRows(rows)
+
+	userRepo := NewPostgresRepository(dbx)
+	err = userRepo.Add(context.TODO(), user)
 
 	assert.NotNil(t, err)
 }

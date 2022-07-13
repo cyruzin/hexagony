@@ -109,12 +109,6 @@ const docTemplate = `{
                             "$ref": "#/definitions/rest.Message"
                         }
                     },
-                    "422": {
-                        "description": "Unprocessable Entity",
-                        "schema": {
-                            "$ref": "#/definitions/rest.Message"
-                        }
-                    },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
@@ -161,8 +155,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/domain.Album"
                         }
                     },
-                    "422": {
-                        "description": "Unprocessable Entity",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/rest.Message"
                         }
@@ -220,8 +214,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/rest.Message"
                         }
                     },
-                    "422": {
-                        "description": "Unprocessable Entity",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/rest.Message"
                         }
@@ -270,8 +264,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/rest.Message"
                         }
                     },
-                    "422": {
-                        "description": "Unprocessable Entity",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/rest.Message"
                         }
@@ -322,8 +316,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/rest.Message"
                         }
                     },
-                    "422": {
-                        "description": "Unprocessable Entity",
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/rest.Message"
                         }
@@ -422,6 +416,12 @@ const docTemplate = `{
                             "$ref": "#/definitions/rest.Message"
                         }
                     },
+                    "409": {
+                        "description": "Conflict",
+                        "schema": {
+                            "$ref": "#/definitions/rest.Message"
+                        }
+                    },
                     "422": {
                         "description": "Unprocessable Entity",
                         "schema": {
@@ -474,8 +474,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/domain.User"
                         }
                     },
-                    "422": {
-                        "description": "Unprocessable Entity",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/rest.Message"
                         }
@@ -539,8 +539,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/rest.Message"
                         }
                     },
-                    "422": {
-                        "description": "Unprocessable Entity",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/rest.Message"
                         }
@@ -589,8 +589,8 @@ const docTemplate = `{
                             "$ref": "#/definitions/rest.Message"
                         }
                     },
-                    "422": {
-                        "description": "Unprocessable Entity",
+                    "404": {
+                        "description": "Not Found",
                         "schema": {
                             "$ref": "#/definitions/rest.Message"
                         }

@@ -101,6 +101,34 @@ func TestFindAllFail(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestFindAllFailNoRows(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	defer db.Close()
+
+	dbx := sqlx.NewDb(db, "sqlmock")
+
+	rows := sqlmock.NewRows([]string{
+		"uuid",
+		"name",
+		"length",
+		"created_at",
+		"updated_at",
+	}).
+		AddRow("", "", "", "", "")
+
+	query := "SELECT \\* FROM albums"
+	mock.ExpectQuery(query).WillReturnRows(rows).WillReturnError(sql.ErrNoRows)
+
+	albumRepo := NewPostgresRepository(dbx)
+	albums, _ := albumRepo.FindAll(context.TODO())
+
+	assert.Nil(t, albums)
+}
+
 func TestFindByID(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
@@ -163,6 +191,36 @@ func TestGetByIDFail(t *testing.T) {
 	assert.NotNil(t, err)
 }
 
+func TestGetByIDFailNoRows(t *testing.T) {
+	newUUID := uuid.New()
+	ctx := context.TODO()
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	defer db.Close()
+
+	dbx := sqlx.NewDb(db, "sqlmock")
+
+	rows := sqlmock.NewRows([]string{
+		"uuid",
+		"name",
+		"length",
+		"created_at",
+		"updated_at",
+	}).
+		AddRow("", "", "", "", "")
+
+	query := "SELECT \\* FROM albums WHERE uuid=\\$1"
+	mock.ExpectQuery(query).WillReturnRows(rows).WillReturnError(sql.ErrNoRows)
+
+	albumRepo := NewPostgresRepository(dbx)
+	_, err = albumRepo.FindByID(ctx, newUUID)
+
+	assert.NotNil(t, err)
+}
+
 func TestAdd(t *testing.T) {
 	now := time.Now()
 	newUUID := uuid.New()
@@ -197,7 +255,7 @@ func TestAdd(t *testing.T) {
 	assert.NoError(t, err)
 }
 
-func TestStoreFail(t *testing.T) {
+func TestAddFail(t *testing.T) {
 	album := &domain.Album{}
 
 	db, mock, err := sqlmock.New()
@@ -228,6 +286,51 @@ func TestStoreFail(t *testing.T) {
 	err = albumRepo.Add(context.TODO(), album)
 
 	assert.NotNil(t, err)
+}
+
+func TestAddFailDuplicate(t *testing.T) {
+	now := time.Now()
+	newUUID := uuid.New()
+	album := &domain.Album{
+		UUID:      newUUID,
+		Name:      "St. Anger",
+		Length:    75,
+		CreatedAt: now,
+		UpdatedAt: now,
+	}
+
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	defer db.Close()
+
+	dbx := sqlx.NewDb(db, "sqlmock")
+
+	rows := sqlmock.NewRows([]string{
+		"uuid",
+		"name",
+		"length",
+		"created_at",
+		"updated_at",
+	}).
+		AddRow("", "", "", "", "")
+
+	queryDuplicate := "SELECT \\* FROM albums"
+	mock.ExpectQuery(queryDuplicate).WillReturnRows(rows).WillReturnError(sql.ErrNoRows)
+
+	query := `INSERT INTO 
+	albums (uuid, name, length, created_at, updated_at) 
+	VALUES ($1, $2, $3, $4, $5)`
+
+	mock.ExpectExec(regexp.QuoteMeta(query)).
+		WithArgs(newUUID, album.Name, album.Length, album.CreatedAt, album.UpdatedAt).
+		WillReturnResult(sqlmock.NewResult(1, 1)) // Using UUID
+
+	albumRepo := NewPostgresRepository(dbx)
+	_ = albumRepo.Add(context.TODO(), album)
+
 }
 
 func TestUpdate(t *testing.T) {

@@ -146,7 +146,7 @@ func TestFetchByIDFail(t *testing.T) {
 	router.HandleFunc("/user/{uuid}", handler.FindByID)
 	router.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 
 	mockUserUseCase.AssertExpectations(t)
 
@@ -165,6 +165,33 @@ func TestFetchByIDFail(t *testing.T) {
 	router.ServeHTTP(rec, req)
 
 	assert.Equal(t, http.StatusInternalServerError, rec.Code)
+
+	mockUserUseCase.AssertExpectations(t)
+}
+
+func TestFetchByIDFailResource(t *testing.T) {
+	newUUID := uuid.New()
+	mockUserUseCase := new(mocks.UserUseCase)
+
+	mockUserUseCase.
+		On("FindByID", mock.Anything, mock.Anything).
+		Return(nil, domain.ErrResourceNotFound)
+
+	handler := UserHandler{
+		userUseCase: mockUserUseCase,
+	}
+
+	router := chi.NewRouter()
+
+	req, err := http.NewRequest(http.MethodGet, "/user/"+newUUID.String(), nil)
+	assert.NoError(t, err)
+
+	rec := httptest.NewRecorder()
+
+	router.HandleFunc("/user/{uuid}", handler.FindByID)
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusNotFound, rec.Code)
 
 	mockUserUseCase.AssertExpectations(t)
 }
@@ -236,7 +263,7 @@ func TestAddFail(t *testing.T) {
 	router.HandleFunc("/user", handler.Add)
 	router.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 
 	mockUserUseCase.AssertExpectations(t)
 
@@ -277,6 +304,38 @@ func TestAddFail(t *testing.T) {
 	router.ServeHTTP(rec, req)
 
 	assert.Equal(t, http.StatusBadRequest, rec.Code)
+
+	mockUserUseCase.AssertExpectations(t)
+}
+
+func TestAddFailDuplicate(t *testing.T) {
+	mockUserUseCase := new(mocks.UserUseCase)
+
+	mockUserUseCase.
+		On("Add", mock.Anything, mock.Anything).
+		Return(domain.ErrDuplicateEmail)
+
+	handler := UserHandler{
+		userUseCase: mockUserUseCase,
+	}
+
+	router := chi.NewRouter()
+
+	payload := []byte(`{
+		"name": "Cyro Dubeux",
+		"email": "xorycx@gmail.com", 
+		"password": "12345678"
+		}`)
+
+	req, err := http.NewRequest(http.MethodPost, "/user", bytes.NewBuffer(payload))
+	assert.NoError(t, err)
+
+	rec := httptest.NewRecorder()
+
+	router.HandleFunc("/user", handler.Add)
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusConflict, rec.Code)
 
 	mockUserUseCase.AssertExpectations(t)
 }
@@ -352,7 +411,7 @@ func TestUpdateFail(t *testing.T) {
 	router.HandleFunc("/user/{uuid}", handler.Update)
 	router.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 
 	mockUserUseCase.AssertExpectations(t)
 
@@ -390,7 +449,7 @@ func TestUpdateFail(t *testing.T) {
 	router.HandleFunc("/user/{uuid}", handler.Update)
 	router.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 
 	mockUserUseCase.AssertExpectations(t)
 
@@ -411,6 +470,44 @@ func TestUpdateFail(t *testing.T) {
 	router.ServeHTTP(rec, req)
 
 	assert.Equal(t, http.StatusBadRequest, rec.Code)
+
+	mockUserUseCase.AssertExpectations(t)
+}
+
+func TestUpdateFailResource(t *testing.T) {
+	now := time.Now()
+	newUUID := uuid.New()
+	mockUserUseCase := new(mocks.UserUseCase)
+
+	mockUser := &domain.User{
+		Name:      "Cyro Dubeux",
+		Email:     "xorycx@gmail.com",
+		Password:  "12345678",
+		UpdatedAt: now,
+	}
+
+	mockUserUseCase.
+		On("Update", mock.Anything, mock.Anything, mock.Anything).
+		Return(domain.ErrResourceNotFound)
+
+	handler := UserHandler{
+		userUseCase: mockUserUseCase,
+	}
+
+	router := chi.NewRouter()
+
+	payload, err := json.Marshal(mockUser)
+	assert.NoError(t, err)
+
+	req, err := http.NewRequest(http.MethodPut, "/user/"+newUUID.String(), bytes.NewBuffer(payload))
+	assert.NoError(t, err)
+
+	rec := httptest.NewRecorder()
+
+	router.HandleFunc("/user/{uuid}", handler.Update)
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusNotFound, rec.Code)
 
 	mockUserUseCase.AssertExpectations(t)
 }
@@ -464,7 +561,7 @@ func TestDeleteFail(t *testing.T) {
 	router.HandleFunc("/user/{uuid}", handler.Delete)
 	router.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
 
 	mockUserUseCase.AssertExpectations(t)
 
@@ -502,7 +599,34 @@ func TestDeleteFail(t *testing.T) {
 	router.HandleFunc("/user/{uuid}", handler.Delete)
 	router.ServeHTTP(rec, req)
 
-	assert.Equal(t, http.StatusUnprocessableEntity, rec.Code)
+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
+
+	mockUserUseCase.AssertExpectations(t)
+}
+
+func TestDeleteFailResource(t *testing.T) {
+	newUUID := uuid.New()
+	mockUserUseCase := new(mocks.UserUseCase)
+
+	mockUserUseCase.
+		On("Delete", mock.Anything, mock.Anything).
+		Return(domain.ErrResourceNotFound)
+
+	handler := UserHandler{
+		userUseCase: mockUserUseCase,
+	}
+
+	router := chi.NewRouter()
+
+	req, err := http.NewRequest(http.MethodDelete, "/user/"+newUUID.String(), nil)
+	assert.NoError(t, err)
+
+	rec := httptest.NewRecorder()
+
+	router.HandleFunc("/user/{uuid}", handler.Delete)
+	router.ServeHTTP(rec, req)
+
+	assert.Equal(t, http.StatusNotFound, rec.Code)
 
 	mockUserUseCase.AssertExpectations(t)
 }

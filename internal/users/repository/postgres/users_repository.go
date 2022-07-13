@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"hexagony/internal/users/domain"
 
 	"github.com/google/uuid"
@@ -27,8 +28,13 @@ func (r *postgresRepository) FindAll(
 		&users,
 		sqlFindAll,
 	)
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
+	noRows := errors.Is(err, sql.ErrNoRows)
+	if noRows {
+		return users, nil
+	}
+
+	if err != nil {
+		return nil, domain.ErrFindAll
 	}
 
 	return users, nil
@@ -46,8 +52,13 @@ func (r *postgresRepository) FindByID(
 		sqlFindByID,
 		uuid,
 	)
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
+	noRows := errors.Is(err, sql.ErrNoRows)
+	if noRows {
+		return nil, domain.ErrResourceNotFound
+	}
+
+	if err != nil {
+		return nil, domain.ErrFindByID
 	}
 
 	return &user, nil
@@ -57,6 +68,15 @@ func (r *postgresRepository) Add(
 	ctx context.Context,
 	user *domain.User,
 ) error {
+	exists, err := r.checkDuplicate(ctx, user.Email)
+	if err != nil {
+		return err
+	}
+
+	if exists {
+		return domain.ErrDuplicateEmail
+	}
+
 	if _, err := r.conn.ExecContext(
 		ctx,
 		sqlAdd,
@@ -67,7 +87,7 @@ func (r *postgresRepository) Add(
 		user.CreatedAt,
 		user.UpdatedAt,
 	); err != nil {
-		return err
+		return domain.ErrAdd
 	}
 
 	return nil
@@ -87,12 +107,12 @@ func (r *postgresRepository) Update(
 		uuid,
 	)
 	if err != nil {
-		return err
+		return domain.ErrUpdate
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return err
+		return domain.ErrUpdate
 	}
 
 	if rowsAffected == 0 {
@@ -112,12 +132,12 @@ func (r *postgresRepository) Delete(
 		uuid,
 	)
 	if err != nil {
-		return err
+		return domain.ErrDelete
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return err
+		return domain.ErrDelete
 	}
 
 	if rowsAffected == 0 {
@@ -125,4 +145,25 @@ func (r *postgresRepository) Delete(
 	}
 
 	return nil
+}
+
+func (r *postgresRepository) checkDuplicate(ctx context.Context, email string) (bool, error) {
+	var userEmail string
+	exists := false
+
+	err := r.conn.GetContext(ctx, &userEmail, sqlCheckDuplicate, email)
+	noRows := errors.Is(err, sql.ErrNoRows)
+	if noRows {
+		return false, nil
+	}
+
+	if err != nil {
+		return false, err
+	}
+
+	if userEmail != "" {
+		exists = true
+	}
+
+	return exists, nil
 }

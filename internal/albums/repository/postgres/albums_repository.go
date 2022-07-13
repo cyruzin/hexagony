@@ -3,6 +3,7 @@ package postgres
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"hexagony/internal/albums/domain"
 
 	"github.com/google/uuid"
@@ -27,8 +28,13 @@ func (r *postgresRepository) FindAll(
 		&albums,
 		sqlFindAll,
 	)
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
+	noRows := errors.Is(err, sql.ErrNoRows)
+	if noRows {
+		return albums, nil
+	}
+
+	if err != nil {
+		return nil, domain.ErrFindAll
 	}
 
 	return albums, nil
@@ -46,8 +52,14 @@ func (r *postgresRepository) FindByID(
 		sqlFindByID,
 		uuid,
 	)
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
+
+	noRows := errors.Is(err, sql.ErrNoRows)
+	if noRows {
+		return nil, domain.ErrResourceNotFound
+	}
+
+	if err != nil {
+		return nil, domain.ErrFindByID
 	}
 
 	return &album, nil
@@ -66,7 +78,7 @@ func (r *postgresRepository) Add(
 		album.CreatedAt,
 		album.UpdatedAt,
 	); err != nil {
-		return err
+		return domain.ErrAdd
 	}
 
 	return nil
@@ -86,12 +98,12 @@ func (r *postgresRepository) Update(
 		uuid,
 	)
 	if err != nil {
-		return err
+		return domain.ErrUpdate
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return err
+		return domain.ErrUpdate
 	}
 
 	if rowsAffected == 0 {
@@ -111,12 +123,12 @@ func (r *postgresRepository) Delete(
 		uuid,
 	)
 	if err != nil {
-		return err
+		return domain.ErrDelete
 	}
 
 	rowsAffected, err := result.RowsAffected()
 	if err != nil {
-		return err
+		return domain.ErrDelete
 	}
 
 	if rowsAffected == 0 {
