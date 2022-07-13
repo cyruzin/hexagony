@@ -99,18 +99,9 @@ func TestAuthenticateFailUser(t *testing.T) {
 
 	dbx := sqlx.NewDb(db, "sqlmock")
 
-	row := sqlmock.NewRows([]string{
-		"uuid",
-		"name",
-		"email",
-		"password",
-		"created_at",
-		"updated_at",
-	}).AddRow("", "", "", "", "", "")
-
 	query := "SELECT \\* from users WHERE email = \\$1"
 
-	mock.ExpectQuery(query).WillReturnRows(row).WillReturnError(sql.ErrNoRows)
+	mock.ExpectQuery(query).WillReturnError(sql.ErrNoRows)
 
 	authRepo := NewPostgresRepository(dbx)
 	user, err := authRepo.Authenticate(context.TODO(), "xorycx@gmail.com")

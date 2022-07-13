@@ -70,7 +70,7 @@ func (r *postgresRepository) Add(
 ) error {
 	exists, err := r.checkDuplicate(ctx, user.Email)
 	if err != nil {
-		return domain.ErrAdd
+		return err
 	}
 
 	if exists {
