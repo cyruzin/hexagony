@@ -97,7 +97,6 @@ func main() {
 
 	// middlewares
 	router.Use(
-		middleware.Timeout(time.Second*60),
 		middleware.Recoverer,
 		cmiddleware.LoggerMiddleware,
 		render.SetContentType(render.ContentTypeJSON),
