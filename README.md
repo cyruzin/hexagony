@@ -2,7 +2,6 @@
   <img src="https://github.com/williamscalado/hexagony/blob/master/logo_hexagony.png" width="300" title="Hexagony">
 </p>
 
-
 [![build](https://github.com/cyruzin/hexagony/workflows/build/badge.svg)](https://github.com/cyruzin/hexagony/actions?query=workflow%3Abuild+branch%3Amaster) [![Coverage Status](https://coveralls.io/repos/github/cyruzin/hexagony/badge.svg?branch=master)](https://coveralls.io/github/cyruzin/hexagony?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/cyruzin/hexagony)](https://goreportcard.com/report/github.com/cyruzin/hexagony) [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
 
 Hexagony name was taken from one of the Hate's songs. Hate is a death metal band from Poland.
@@ -20,7 +19,7 @@ $ docker-compose up --build
 Or in Detached Mode:
 
 ```sh
-$ docker-compose up -d --build 
+$ docker-compose up -d --build
 ```
 
 Then, check the app up and running: http://localhost:8000.
@@ -31,7 +30,7 @@ There's a online version running on Heroku: https://hexagony.herokuapp.com/
 
 Access: http://localhost:8000/docs/index.html
 
-Generate doc: 
+Generate doc:
 
 ```sh
 $ swag init -g ./cmd/server/main.go
@@ -55,11 +54,3 @@ Use the following credentials:
 Check the Hexagony front-end: https://github.com/williamscalado/hexagony-front-react
 
 There's a online version running on Vercel: https://hexagony.vercel.app
-
-## Contributing
-
-Feel free to send pull requests, let's improve this project.
-
-## License
-
-MIT
