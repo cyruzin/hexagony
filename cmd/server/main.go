@@ -5,21 +5,18 @@ import (
 	"fmt"
 	"time"
 
-	albumsController "hexagony/internal/albums/controller"
-	albumsRepository "hexagony/internal/albums/repository/postgres"
-	usersController "hexagony/internal/users/controller"
-	usersRepository "hexagony/internal/users/repository/postgres"
-	"hexagony/pkg/clog"
+	"hexagony/libs/clog"
+	"hexagony/libs/rest"
+	"hexagony/routes"
 
-	authController "hexagony/internal/auth/controller"
-	authRepository "hexagony/internal/auth/repository/postgres"
-	authUseCase "hexagony/internal/auth/usecase"
+	repository "hexagony/app/repositories"
+	usecase "hexagony/app/usecases"
 
 	"net/http"
 	"os"
 	"os/signal"
 
-	cmiddleware "hexagony/internal/shared/middleware"
+	cmiddleware "hexagony/app/http/middleware"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -109,24 +106,30 @@ func main() {
 
 	// root page
 	router.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		if _, err := w.Write([]byte("Welcome to Hexagony API")); err != nil {
-			return
-		}
+		rest.JSON(w, http.StatusOK, rest.Message{Message: "Welcome to Hexagony API"})
 	})
 
 	// swagger documentation end-point
 	router.Get("/docs/*", httpSwagger.WrapHandler)
 
 	// domain instances
-	usersRepository := usersRepository.NewPostgresRepository(conn)
-	usersController.NewUserHandler(router, usersRepository)
+	usersRepository := repository.NewUsersRepository(conn)
+	usersUseCase := usecase.NewUserUseCase(usersRepository)
 
-	albumsRepository := albumsRepository.NewPostgresRepository(conn)
-	albumsController.NewAlbumHandler(router, albumsRepository)
+	albumsRepository := repository.NewAlbumsRepository(conn)
+	albumsUseCase := usecase.NewAlbumsUseCase(albumsRepository)
 
-	authRepository := authRepository.NewPostgresRepository(conn)
-	authUseCase := authUseCase.NewAuthUsecase(authRepository)
-	authController.NewAuthHandler(router, authUseCase)
+	authRepository := repository.NewAuthRepository(conn)
+	authUseCase := usecase.NewAuthUsecase(authRepository)
+
+	rs := &routes.RoutesUseCases{
+		AuthUseCase:   authUseCase,
+		UsersUseCase:  usersUseCase,
+		AlbumsUseCase: albumsUseCase,
+	}
+
+	// api routes
+	routes.Api(router, rs)
 
 	// server configuration and timeouts
 	srv := &http.Server{
