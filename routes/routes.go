@@ -14,13 +14,13 @@ type RoutesUseCases struct {
 	domain.AlbumsUseCase
 }
 
-func AuthRoutes(c *chi.Mux, auc domain.AuthUseCase) {
+func authRoutes(c *chi.Mux, auc domain.AuthUseCase) {
 	handler := controller.AuthController{AuthUseCase: auc}
 
 	c.Post("/auth", handler.Authenticate)
 }
 
-func UsersRoutes(c *chi.Mux, as domain.UsersUseCase) {
+func usersRoutes(c *chi.Mux, as domain.UsersUseCase) {
 	handler := controller.UsersController{UsersUseCase: as}
 
 	c.Route("/user", func(r chi.Router) {
@@ -34,7 +34,7 @@ func UsersRoutes(c *chi.Mux, as domain.UsersUseCase) {
 	})
 }
 
-func AlbumsRoutes(c *chi.Mux, as domain.AlbumsUseCase) {
+func albumsRoutes(c *chi.Mux, as domain.AlbumsUseCase) {
 	handler := controller.AlbumsController{AlbumsUseCase: as}
 
 	c.Route("/album", func(r chi.Router) {
@@ -49,7 +49,7 @@ func AlbumsRoutes(c *chi.Mux, as domain.AlbumsUseCase) {
 }
 
 func Api(c *chi.Mux, r *RoutesUseCases) {
-	AuthRoutes(c, r.AuthUseCase)
-	UsersRoutes(c, r.UsersUseCase)
-	AlbumsRoutes(c, r.AlbumsUseCase)
+	authRoutes(c, r.AuthUseCase)
+	usersRoutes(c, r.UsersUseCase)
+	albumsRoutes(c, r.AlbumsUseCase)
 }
