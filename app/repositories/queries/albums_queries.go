@@ -1,4 +1,4 @@
-package query
+package queries
 
 const (
 	SqlAlbumsFindAll = "SELECT * FROM albums ORDER BY updated_at DESC LIMIT 10"

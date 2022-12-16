@@ -1,4 +1,4 @@
-package query
+package queries
 
 const (
 	SqlUsersFindAll = "SELECT uuid,name,email,created_at,updated_at FROM users ORDER BY updated_at DESC LIMIT 10"

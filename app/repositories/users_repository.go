@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"hexagony/app/domain"
-	"hexagony/app/repositories/query"
+	"hexagony/app/repositories/queries"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -27,7 +27,7 @@ func (r *usersRepository) FindAll(
 	err := r.conn.SelectContext(
 		ctx,
 		&users,
-		query.SqlUsersFindAll,
+		queries.SqlUsersFindAll,
 	)
 	noRows := errors.Is(err, sql.ErrNoRows)
 	if noRows {
@@ -50,7 +50,7 @@ func (r *usersRepository) FindByID(
 	err := r.conn.GetContext(
 		ctx,
 		&user,
-		query.SqlUsersFindByID,
+		queries.SqlUsersFindByID,
 		uuid,
 	)
 	noRows := errors.Is(err, sql.ErrNoRows)
@@ -80,7 +80,7 @@ func (r *usersRepository) Add(
 
 	if _, err := r.conn.ExecContext(
 		ctx,
-		query.SqlUsersAdd,
+		queries.SqlUsersAdd,
 		user.UUID,
 		user.Name,
 		user.Email,
@@ -101,7 +101,7 @@ func (r *usersRepository) Update(
 ) error {
 	result, err := r.conn.ExecContext(
 		ctx,
-		query.SqlUsersUpdate,
+		queries.SqlUsersUpdate,
 		user.Name,
 		user.Email,
 		user.UpdatedAt,
@@ -129,7 +129,7 @@ func (r *usersRepository) Delete(
 ) error {
 	result, err := r.conn.ExecContext(
 		ctx,
-		query.SqlUsersDelete,
+		queries.SqlUsersDelete,
 		uuid,
 	)
 	if err != nil {
@@ -152,7 +152,7 @@ func (r *usersRepository) checkDuplicate(ctx context.Context, email string) (boo
 	var userEmail string
 	exists := false
 
-	err := r.conn.GetContext(ctx, &userEmail, query.SqlUsersCheckDuplicate, email)
+	err := r.conn.GetContext(ctx, &userEmail, queries.SqlUsersCheckDuplicate, email)
 	noRows := errors.Is(err, sql.ErrNoRows)
 	if noRows {
 		return false, nil

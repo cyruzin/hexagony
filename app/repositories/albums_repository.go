@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"hexagony/app/domain"
-	"hexagony/app/repositories/query"
+	"hexagony/app/repositories/queries"
 
 	"github.com/google/uuid"
 	"github.com/jmoiron/sqlx"
@@ -27,7 +27,7 @@ func (r *albumsRepository) FindAll(
 	err := r.conn.SelectContext(
 		ctx,
 		&albums,
-		query.SqlAlbumsFindAll,
+		queries.SqlAlbumsFindAll,
 	)
 	noRows := errors.Is(err, sql.ErrNoRows)
 	if noRows {
@@ -50,7 +50,7 @@ func (r *albumsRepository) FindByID(
 	err := r.conn.GetContext(
 		ctx,
 		&album,
-		query.SqlAlbumsFindByID,
+		queries.SqlAlbumsFindByID,
 		uuid,
 	)
 
@@ -72,7 +72,7 @@ func (r *albumsRepository) Add(
 ) error {
 	if _, err := r.conn.ExecContext(
 		ctx,
-		query.SqlAlbumsAdd,
+		queries.SqlAlbumsAdd,
 		album.UUID,
 		album.Name,
 		album.Length,
@@ -92,7 +92,7 @@ func (r *albumsRepository) Update(
 ) error {
 	result, err := r.conn.ExecContext(
 		ctx,
-		query.SqlAlbumsUpdate,
+		queries.SqlAlbumsUpdate,
 		album.Name,
 		album.Length,
 		album.UpdatedAt,
@@ -120,7 +120,7 @@ func (r *albumsRepository) Delete(
 ) error {
 	result, err := r.conn.ExecContext(
 		ctx,
-		query.SqlAlbumsDelete,
+		queries.SqlAlbumsDelete,
 		uuid,
 	)
 	if err != nil {
