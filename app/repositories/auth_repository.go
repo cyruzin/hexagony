@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"hexagony/app/domain"
+	"hexagony/app/repositories/query"
 
 	"github.com/jmoiron/sqlx"
 )
@@ -20,7 +21,7 @@ func NewAuthRepository(Conn *sqlx.DB) domain.AuthRepository {
 func (p *authRepository) Authenticate(ctx context.Context, email string) (*domain.Users, error) {
 	var user domain.Users
 
-	err := p.Conn.GetContext(ctx, &user, sqlAuthGetUser, email)
+	err := p.Conn.GetContext(ctx, &user, query.SqlAuthGetUser, email)
 	noRows := errors.Is(err, sql.ErrNoRows)
 
 	if noRows {
