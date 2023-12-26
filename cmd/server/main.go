@@ -46,7 +46,7 @@ const (
 // @license.name  MIT
 // @license.url   https://github.com/cyruzin/hexagony/blob/master/LICENSE
 
-// @host  hexagony.herokuapp.com
+// @host  http://localhost:8000
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

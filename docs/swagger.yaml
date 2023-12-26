@@ -84,7 +84,7 @@ definitions:
       status:
         type: integer
     type: object
-host: hexagony.herokuapp.com
+host: http://localhost:8000
 info:
   contact:
     email: xorycx@gmail.com

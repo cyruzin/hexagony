@@ -14,7 +14,7 @@
         },
         "version": "1.0"
     },
-    "host": "hexagony.herokuapp.com",
+    "host": "http://localhost:8000",
     "paths": {
         "/album": {
             "get": {

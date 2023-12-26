@@ -30,7 +30,7 @@ type albumRequest struct {
 // @Accept       json
 // @Produce      json
 // @Param        Authorization  header    string  true  "Insert your access token"  default(Bearer <Add access token here>)
-// @Success      200            {object}  []domain.Album
+// @Success      200            {object}  []*domain.Albums
 // @Failure      500            {object}  rest.Message
 // @Router       /album [get]
 func (a *AlbumsController) FindAll(w http.ResponseWriter, r *http.Request) {
@@ -52,7 +52,7 @@ func (a *AlbumsController) FindAll(w http.ResponseWriter, r *http.Request) {
 // @Produce      json
 // @Param        Authorization  header    string  true  "Insert your access token"  default(Bearer <Add access token here>)
 // @Param        uuid           path      string  true  "album uuid"
-// @Success      200            {object}  domain.Album
+// @Success      200            {object}  *domain.Albums
 // @Failure      404            {object}  rest.Message
 // @Failure      500            {object}  rest.Message
 // @Router       /album/{uuid} [get]
