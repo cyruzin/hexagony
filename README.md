@@ -4,7 +4,7 @@
 
 [![build](https://github.com/cyruzin/hexagony/workflows/build/badge.svg)](https://github.com/cyruzin/hexagony/actions?query=workflow%3Abuild+branch%3Amaster) [![Coverage Status](https://coveralls.io/repos/github/cyruzin/hexagony/badge.svg?branch=master)](https://coveralls.io/github/cyruzin/hexagony?branch=master) [![Go Report Card](https://goreportcard.com/badge/github.com/cyruzin/hexagony)](https://goreportcard.com/report/github.com/cyruzin/hexagony) [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
 
-Hexagony name was taken from one of the Hate's songs. Hate is a death metal band from Poland.
+Welcome to Hexagony Records! Hexagony name was taken from one of the Hate's songs. Hate is a death metal band from Poland.
 
 ## Running
 
@@ -23,8 +23,6 @@ $ docker-compose up -d --build
 ```
 
 Then, check the app up and running: http://localhost:8000.
-
-There's a online version running on Heroku: https://hexagony.herokuapp.com/
 
 ## Documentation
 
@@ -52,5 +50,3 @@ Use the following credentials:
 ## Front-End Application
 
 Check the Hexagony front-end: https://github.com/williamscalado/hexagony-front-react
-
-There's a online version running on Vercel: https://hexagony.vercel.app
