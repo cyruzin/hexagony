@@ -28,7 +28,7 @@ func TestAlbumsFindAll(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		mockAlbumRepo.On("FindAll",
-			mock.AnythingOfType("*context.emptyCtx")).
+			mock.AnythingOfType("context.todoCtx")).
 			Return(mockListAlbum, nil).Once()
 
 		a := NewAlbumsUseCase(mockAlbumRepo)
@@ -43,7 +43,7 @@ func TestAlbumsFindAll(t *testing.T) {
 
 	t.Run("error-failed", func(t *testing.T) {
 		mockAlbumRepo.On("FindAll",
-			mock.AnythingOfType("*context.emptyCtx")).
+			mock.AnythingOfType("context.todoCtx")).
 			Return(nil, errors.New("Unexpected error")).Once()
 
 		a := NewAlbumsUseCase(mockAlbumRepo)
@@ -68,7 +68,7 @@ func TestAlbumsFindByID(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		mockAlbumRepo.On("FindByID",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("uuid.UUID")).
 			Return(mockAlbum, nil).Once()
 
@@ -82,7 +82,7 @@ func TestAlbumsFindByID(t *testing.T) {
 
 	t.Run("failure", func(t *testing.T) {
 		mockAlbumRepo.On("FindByID",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("uuid.UUID")).
 			Return(nil, errors.New("Unexpected error")).Once()
 
@@ -107,7 +107,7 @@ func TestAlbumsAdd(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		mockAlbumRepo.On("Add",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("*domain.Albums")).
 			Return(nil).Once()
 
@@ -120,7 +120,7 @@ func TestAlbumsAdd(t *testing.T) {
 
 	t.Run("failure", func(t *testing.T) {
 		mockAlbumRepo.On("Add",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("*domain.Albums")).
 			Return(errors.New("Unexpected error")).Once()
 
@@ -146,7 +146,7 @@ func TestAlbumsUpdate(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		mockAlbumRepo.On("Update",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("uuid.UUID"),
 			mock.AnythingOfType("*domain.Albums")).
 			Return(nil).Once()
@@ -160,7 +160,7 @@ func TestAlbumsUpdate(t *testing.T) {
 
 	t.Run("failure", func(t *testing.T) {
 		mockAlbumRepo.On("Update",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("uuid.UUID"),
 			mock.AnythingOfType("*domain.Albums")).
 			Return(errors.New("Unexpected error")).Once()
@@ -180,7 +180,7 @@ func TestAlbumsDelete(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		mockAlbumRepo.On("Delete",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("uuid.UUID")).
 			Return(nil).Once()
 
@@ -193,7 +193,7 @@ func TestAlbumsDelete(t *testing.T) {
 
 	t.Run("failure", func(t *testing.T) {
 		mockAlbumRepo.On("Delete",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("uuid.UUID")).
 			Return(errors.New("Unexpected error")).Once()
 

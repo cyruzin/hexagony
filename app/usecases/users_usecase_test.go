@@ -28,7 +28,7 @@ func TestUsersFindAll(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		mockUserRepo.On("FindAll",
-			mock.AnythingOfType("*context.emptyCtx")).
+			mock.AnythingOfType("context.todoCtx")).
 			Return(mockListUsers, nil).Once()
 
 		a := NewUserUseCase(mockUserRepo)
@@ -43,7 +43,7 @@ func TestUsersFindAll(t *testing.T) {
 
 	t.Run("error-failed", func(t *testing.T) {
 		mockUserRepo.On("FindAll",
-			mock.AnythingOfType("*context.emptyCtx")).
+			mock.AnythingOfType("context.todoCtx")).
 			Return(nil, errors.New("Unexpected error")).Once()
 
 		a := NewUserUseCase(mockUserRepo)
@@ -68,7 +68,7 @@ func TestUsersFindByID(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		mockUserRepo.On("FindByID",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("uuid.UUID")).
 			Return(mockUser, nil).Once()
 
@@ -82,7 +82,7 @@ func TestUsersFindByID(t *testing.T) {
 
 	t.Run("failure", func(t *testing.T) {
 		mockUserRepo.On("FindByID",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("uuid.UUID")).
 			Return(nil, errors.New("Unexpected error")).Once()
 
@@ -108,7 +108,7 @@ func TestUsersAdd(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		mockUserRepo.On("Add",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("*domain.Users")).
 			Return(nil).Once()
 
@@ -121,7 +121,7 @@ func TestUsersAdd(t *testing.T) {
 
 	t.Run("failure", func(t *testing.T) {
 		mockUserRepo.On("Add",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("*domain.Users")).
 			Return(errors.New("Unexpected error")).Once()
 
@@ -146,7 +146,7 @@ func TestUsersUpdate(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		mockUserRepo.On("Update",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("uuid.UUID"),
 			mock.Anything).
 			Return(nil).Once()
@@ -160,7 +160,7 @@ func TestUsersUpdate(t *testing.T) {
 
 	t.Run("failure", func(t *testing.T) {
 		mockUserRepo.On("Update",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("uuid.UUID"),
 			mock.Anything).
 			Return(errors.New("Unexpected error")).Once()
@@ -180,7 +180,7 @@ func TestUsersDelete(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		mockUserRepo.On("Delete",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("uuid.UUID")).
 			Return(nil).Once()
 
@@ -193,7 +193,7 @@ func TestUsersDelete(t *testing.T) {
 
 	t.Run("failure", func(t *testing.T) {
 		mockUserRepo.On("Delete",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("uuid.UUID")).
 			Return(errors.New("Unexpected error")).Once()
 

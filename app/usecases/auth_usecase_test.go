@@ -27,7 +27,7 @@ func TestAuthenticate(t *testing.T) {
 
 	t.Run("success", func(t *testing.T) {
 		mockAuthRepo.On("Authenticate",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("string")).
 			Return(mockUser, nil).
 			Once()
@@ -42,7 +42,7 @@ func TestAuthenticate(t *testing.T) {
 
 	t.Run("error-failed", func(t *testing.T) {
 		mockAuthRepo.On("Authenticate",
-			mock.AnythingOfType("*context.emptyCtx"),
+			mock.AnythingOfType("context.todoCtx"),
 			mock.AnythingOfType("string"),
 			mock.AnythingOfType("string")).
 			Return(nil, errors.New("Unexpected error")).
